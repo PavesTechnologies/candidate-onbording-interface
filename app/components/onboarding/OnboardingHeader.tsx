@@ -4,10 +4,16 @@ import { useEffect, useRef } from "react";
 import { usePathname, useRouter, useParams } from "next/navigation";
 import { steps } from "./steps";
 
+type IdentityDocument = {
+  identity_file_number?: string;
+  file_path?: string;
+  identity_uuid?: string;
+};
+
 export default function OnboardingHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const { token } = useParams();
+  const { token } = useParams<{token: string}>();
 
   // Track max step in ref
   const maxStepRef = useRef(0);
@@ -45,7 +51,7 @@ export default function OnboardingHeader() {
     
     // Preview step is "complete" if all 5 core data steps are complete
     if (steps[index].path === "preview-page") {
-       return [0,1,2,3,4].every(idx => checkStepCompletion(idx));
+       return [0,1,2,3,4,5].every(idx => checkStepCompletion(idx));
     }
     if (steps[index].path === "success") {
        return false;
@@ -73,7 +79,16 @@ export default function OnboardingHeader() {
         if (steps[index].path === "identity-documents") {
           return Array.isArray(parsed.documents) && 
                  parsed.documents.length > 0 && 
-                 parsed.documents.some((d: any) => d.identity_file_number && (d.file_path || d.identity_uuid));
+                 parsed.documents.some((d: IdentityDocument) => d.identity_file_number && (d.file_path || d.identity_uuid));
+        }
+        if (steps[index].path === "bank-pf-details") {
+          return !!(
+            parsed.account_holder_name &&
+            parsed.bank_name &&
+            parsed.account_number &&
+            parsed.ifsc_code &&
+            parsed.account_type
+          );
         }
         return Object.keys(parsed).length > 0;
       }
@@ -86,7 +101,7 @@ export default function OnboardingHeader() {
   const completedSteps = steps.map((_, index) => checkStepCompletion(index));
   
   // Progress is based on the first 5 core steps
-  const coreStepsCount = 5;
+  const coreStepsCount = 6;
   const completedCoreCount = completedSteps.slice(0, coreStepsCount).filter(Boolean).length;
   const progressPercent = Math.round((completedCoreCount / coreStepsCount) * 100);
 

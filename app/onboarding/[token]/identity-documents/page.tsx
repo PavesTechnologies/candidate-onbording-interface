@@ -273,7 +273,7 @@ export default function IdentityDocumentsPage() {
       if (!userUuid) throw new Error("User UUID not found");
 
       if (!hasChanges()) {
-        toast("No changes detected. Moving to next step.");
+        toast("No changes detected", { icon: "ℹ️" });
         if (!!searchParams.get("edit")) {
           router.push(`/onboarding/${token}/preview-page`);
         } else {

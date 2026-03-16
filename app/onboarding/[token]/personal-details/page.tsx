@@ -300,7 +300,7 @@ console.log("personalUuid:", personalUuid);
       // no changes
       const isEditMode = !!searchParams.get("edit");
       if (personalUuid && isSame(originalPersonal, payload)) {
-        toast(" No changes detected");
+        toast(" No changes detected",{ icon: "ℹ️" });
         if (isEditMode) {
           router.push(`/onboarding/${token}/preview-page`);
         } else {

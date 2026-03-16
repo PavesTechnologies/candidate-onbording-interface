@@ -105,7 +105,14 @@ export default function AddressDetailsPage() {
       a.country_uuid === b.country_uuid
     );
   }
+  function isDraftSame(original: AddressDraft | null, current: AddressDraft) {
+    if (!original) return false;
 
+    return (
+      isEqual(original.permanent, current.permanent) &&
+      isEqual(original.current, current.current)
+    );
+  }
   /* ----------- VALIDATION ----------- */
   const validateField = (fieldName: keyof AddressForm, value: string): string => {
     switch (fieldName) {
@@ -254,6 +261,27 @@ export default function AddressDetailsPage() {
 
   const handleContinue = async () => {
     if (isSubmittingRef.current) return;
+    const isEditMode = !!searchParams.get("edit");
+
+    const currentDraft: AddressDraft = {
+      permanent,
+      current: sameAsPermanent
+        ? { ...permanent, address_type: "current" }
+        : current,
+    };
+
+    if (isDraftSame(originalDraft, currentDraft)) {
+
+      toast("No changes detected", { icon: "ℹ️" });
+
+      if (isEditMode) {
+        router.push(`/onboarding/${token}/preview-page`);
+      } else {
+        router.push(`/onboarding/${token}/identity-documents`);
+      }
+
+      return;
+    }
 
     const isPermValid = validateAddressSection("permanent");
     const isCurrValid = sameAsPermanent || validateAddressSection("current");

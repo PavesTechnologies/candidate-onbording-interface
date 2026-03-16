@@ -98,6 +98,23 @@ interface IdentityDocument {
   file_path?: string;
 }
 
+interface BankDetails {
+  bank: {
+    account_holder_name: string;
+    bank_name: string;
+    branch_name: string;
+    account_number: string;
+    confirm_account_number: string;
+    ifsc_code: string;
+    account_type: string;
+  }
+  pf: {
+      pf_member: boolean,
+      uan_number?: string
+  }
+}
+
+
 /* ===================== COMPONENT ===================== */
 
 const DOCUMENT_LABELS: Record<string, string> = {
@@ -168,6 +185,11 @@ export default function OnboardingPreviewPage() {
       country_uuid: "",
       documents: [],
     }
+  );
+
+  const [bankDetails] = useLocalStorageForm<BankDetails | null>(
+    `bank-pf-details-${token}`,
+    null
   );
 
   const user_uuid = personalDetails?.user_uuid;
@@ -555,6 +577,64 @@ export default function OnboardingPreviewPage() {
               </div>
             </Section>
           )}
+          {/* BANK & PF DETAILS */}
+          <Section
+            title="Bank & PF Details"
+            onEdit={() => router.push(`/onboarding/${token}/bank-pf-details?edit=true`)}>
+            <div className="p-6 rounded-xl border border-indigo-100 bg-white shadow-sm">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+
+                <PreviewRow
+                  label="Account Holder Name"
+                  value={bankDetails?.bank?.account_holder_name}
+                />
+
+                <PreviewRow
+                  label="Bank Name"
+                  value={bankDetails?.bank?.bank_name}
+                />
+
+                <PreviewRow
+                  label="Branch Name"
+                  value={bankDetails?.bank?.branch_name}
+                />
+
+                <PreviewRow
+                  label="Account Type"
+                  value={bankDetails?.bank?.account_type}
+                />
+
+                <PreviewRow
+                  label="Account Number"
+                  value={
+                    bankDetails?.bank?.account_number
+                      ? `**** **** **** ${bankDetails.bank.account_number.slice(-4)}`
+                      : "-"
+                  }
+                />
+
+                <PreviewRow
+                  label="IFSC Code"
+                  value={bankDetails?.bank?.ifsc_code}
+                />
+
+                <PreviewRow
+                  label="PF Member"
+                  value={bankDetails?.pf?.pf_member ? "Yes" : "No"}
+                />
+
+                {bankDetails?.pf?.pf_member && (
+                  <PreviewRow
+                    label="UAN Number"
+                    value={bankDetails?.pf?.uan_number}
+                  />
+                )}
+
+              </div>
+
+            </div>
+          </Section>
 
           {/* SUBMISSION ACTION */}
           <div className="mt-12 space-y-8">

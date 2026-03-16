@@ -6,6 +6,7 @@ export const steps = [
   { id: 3, label: "Identity Documents", path: "identity-documents" },
   { id: 4, label: "Education Details", path: "education-details" },
   { id: 5, label: "Experience Details", path: "experience-details" },
-  { id: 6, label: "Preview Details", path: "preview-page" },
-  { id: 7, label: "Success", path: "success" },
+  { id: 6, label: "Bank & Pf Details", path: "bank-pf-details" },
+  { id: 7, label: "Preview Details", path: "preview-page" },
+  { id: 8, label: "Success", path: "success" },
 ];

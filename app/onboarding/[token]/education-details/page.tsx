@@ -294,7 +294,7 @@ export default function EducationDetailsPage() {
         }
       }
 
-      if (!hasAnyChange) toast.success("No changes recorded");
+      if (!hasAnyChange) toast.success("No changes recorded",{ icon: "ℹ️" });
 
       setUploadedMap(nextUploadedMap);
 

@@ -49,6 +49,26 @@ function calculateDuration(start: string, end: string) {
   return `${remainingMonths} month(s)`;
 }
 
+const isExperienceSame = (
+    original: ExperienceDetails[] | null,
+    current: ExperienceDetails[]
+  ) => {
+    if (!original) return false;
+
+    const clean = (list: ExperienceDetails[]) =>
+      list.map((e) => ({
+        company_name: e.company_name,
+        role_title: e.role_title,
+        start_date: e.start_date,
+        end_date: e.end_date,
+        employment_type: e.employment_type,
+        is_current: e.is_current,
+        notice_period_days: e.notice_period_days,
+      }));
+
+    return JSON.stringify(clean(original)) === JSON.stringify(clean(current));
+  };
+
 export default function ExperienceDetailsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -157,13 +177,26 @@ export default function ExperienceDetailsPage() {
 
   const handleSaveAndContinue = async () => {
     if (!validateExperience()) return;
+    const isEditMode = !!searchParams.get("edit");
+
+    if (isExperienceSame(originalList, experienceList)) {
+      toast("No changes detected", { icon: "ℹ️" });
+
+      if (isEditMode) {
+        router.push(`/onboarding/${token}/preview-page`);
+      } else {
+        router.push(`/onboarding/${token}/bank-pf-details`);
+      }
+
+      return;
+    }
 
     if (!hasExperience) {
       toast.success("Saved successfully");
       if (!!searchParams.get("edit")) {
         router.push(`/onboarding/${token}/preview-page`);
       } else {
-        router.push(`/onboarding/${token}/preview-page`);
+        router.push(`/onboarding/${token}/bank-pf-details`);
       }
       return;
     }
@@ -228,7 +261,7 @@ export default function ExperienceDetailsPage() {
       if (!!searchParams.get("edit")) {
         router.push(`/onboarding/${token}/preview-page`);
       } else {
-        router.push(`/onboarding/${token}/preview-page`);
+        router.push(`/onboarding/${token}/bank-pf-details`);
       }
     } catch (err) {
       toast.error("Failed to save experience details");
