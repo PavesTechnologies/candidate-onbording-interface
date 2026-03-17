@@ -376,7 +376,7 @@ export default function BankPfDetailsPage() {
                   handleFieldChange("account_type", e.target.value, bankValidationRules.account_type);
                 }}
               >
-                <option value="">Select</option>
+                {/* <option value="">Select</option> */}
                 <option value="Savings">Savings</option>
                 <option value="Current">Current</option>
               </SelectInput>
