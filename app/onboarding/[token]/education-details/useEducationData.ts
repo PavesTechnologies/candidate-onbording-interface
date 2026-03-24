@@ -42,7 +42,7 @@ export const useEducationData = ({
 
     Promise.all([
       fetchEducationMapping(base, countryUuid),
-      fetchEducationLevel(base)
+      fetchEducationLevel()
     ])
       .then(async ([mappingData, educationLevelData]) => {
         setRows(mappingData);
@@ -75,7 +75,7 @@ export const useEducationData = ({
         try {
           // Fetch degrees for all unique matched education levels
           const degreePromises = uniqueUuids.map(uuid =>
-            fetchDegreeMaster(base, uuid).then(degrees =>
+            fetchDegreeMaster(uuid).then(degrees =>
               // Attach education_name to each degree so the UI can filter them
               degrees.map(d => ({ ...d, education_name: educationMap.get(uuid) }))
             )

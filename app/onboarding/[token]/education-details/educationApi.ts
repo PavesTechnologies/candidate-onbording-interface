@@ -14,22 +14,31 @@ export const fetchEducationMapping = async (
   return Array.isArray(data) ? (data as MappingRow[]) : [];
 };
 
-export const fetchEducationLevel = async (base: string) => {
-  // We need to use process.env.NEXT_PUBLIC_API_BASE_URL because /masters might not be prefixed with the same base as token endpoints in some cases,
-  // but looking at other masters endpoints in the app, `base` is used if it represents NEXT_PUBLIC_API_BASE_URL. 
-  // Let's use `${base}/masters/education-level` to be consistent with how base is passed in.
-  const res = await fetch(`${base}/masters/education-level`);
+export const fetchEducationLevel = async () => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/masters/education-level`
+  );
+
   if (!res.ok) {
     if (res.status === 404) return [];
     throw new Error("Failed to load education levels");
   }
+
   const data = await res.json();
-  const value = data.value || data; // Handle paginated or direct array response
-  return Array.isArray(value) ? (value as EducationLevel[]) : [];
+  const value = data.value || data;
+
+  return Array.isArray(value) ? value : [];
 };
 
-export const fetchDegreeMaster = async (base: string, education_uuid: string) => {
-  const res = await fetch(`${base}/education/degree-master/${education_uuid}`);
+
+export const fetchDegreeMaster = async (education_uuid: string) => {
+  const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/education/degree-master/${education_uuid}`;
+  
+  console.log("Calling Degree API:", url); // 👈 add this
+
+  const res = await fetch(url);
+
+  console.log("Status:", res.status); // 👈 add this
 
   if (!res.ok) {
     if (res.status === 404) return [];
@@ -40,13 +49,13 @@ export const fetchDegreeMaster = async (base: string, education_uuid: string) =>
 
   if (!Array.isArray(data)) return [];
 
-  // ✅ remove duplicate degrees
   const uniqueDegrees = Array.from(
     new Map(data.map((d: DegreeMaster) => [d.degree_uuid, d])).values()
   );
 
   return uniqueDegrees as DegreeMaster[];
 };
+
 
 export const createEducationDocument = async (
   base: string,
