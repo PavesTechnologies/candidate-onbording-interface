@@ -1,13 +1,14 @@
 "use client";
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { useGlobalLoading } from "../../../components/onboarding/LoadingContext";
 import { FormField, TextInput, SelectInput } from "@/app/components/onboarding/FormComponents";
 import { Button } from "@/app/components/onboarding/ButtonComponents";
 import { ErrorAlert } from "@/app/components/onboarding/AlertsComponents";
 import { useFormValidation } from "@/app/hooks/useFormValidation";
+import { useLocalStorageForm } from "../hooks/localStorage";
 
 /* ===================== TYPES ===================== */
 
@@ -26,25 +27,35 @@ interface PfDetails {
   uan_number?: string;
 }
 
-interface ExistingBank {
-  bank_uuid: string;
-  user_uuid: string;
-  account_holder_name: string;
-  bank_name: string;
-  branch_name: string;
-  account_number: string;
-  ifsc_code: string;
-  account_type: string;
+interface BankPfStorage {
+  bank: BankDetails;
+  pf: PfDetails;
+
+  // ✅ ONLY UUID BASED (LIKE EXPERIENCE PAGE)
+  meta?: {
+    bank_uuid?: string;
+    pf_uuid?: string;
+  };
 }
 
-interface ExistingPf {
-  pf_uuid: string;
-  user_uuid: string;
-  pf_member: boolean;
-  uan_number?: string;
-}
+/* ================= DEFAULTS ================= */
 
-/* ================= VALIDATION RULES ================= */
+const defaultBank: BankDetails = {
+  account_holder_name: "",
+  bank_name: "",
+  branch_name: "",
+  account_number: "",
+  confirm_account_number: "",
+  ifsc_code: "",
+  account_type: ""
+};
+
+const defaultPf: PfDetails = {
+  pf_member: false,
+  uan_number: ""
+};
+
+/* ================= VALIDATION ================= */
 
 const bankValidationRules = {
   account_holder_name: [
@@ -52,9 +63,6 @@ const bankValidationRules = {
   ],
   bank_name: [
     { validate: (v: unknown) => !!String(v || "").trim(), errorMessage: "Bank name is required" }
-  ],
-  branch_name: [
-    { validate: (v: unknown) => !!String(v || "").trim(), errorMessage: "Branch name is required" }
   ],
   account_number: [
     { validate: (v: unknown) => !!String(v || "").trim(), errorMessage: "Account number is required" }
@@ -78,117 +86,51 @@ export default function BankPfDetailsPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [customErrors, setCustomErrors] = useState<Record<string, string>>({});
 
   const { setLoading: setGlobalLoading } = useGlobalLoading();
 
-  const [existingBank, setExistingBank] = useState<ExistingBank | null>(null);
-  const [existingPf, setExistingPf] = useState<ExistingPf | null>(null);
+  const [formData, setFormData] = useLocalStorageForm<BankPfStorage>(
+    `bank-pf-details-${token}`,
+    { bank: defaultBank, pf: defaultPf }
+  );
 
-  const [bankDetails, setBankDetails] = useState<BankDetails>({
-    account_holder_name: "",
-    bank_name: "",
-    branch_name: "",
-    account_number: "",
-    confirm_account_number: "",
-    ifsc_code: "",
-    account_type: ""
-  });
+  const bankDetails = useMemo(() => formData?.bank || defaultBank, [formData]);
+  const pfDetails = useMemo(() => formData?.pf || defaultPf, [formData]);
 
-  const [pfDetails, setPfDetails] = useState<PfDetails>({
-    pf_member: false,
-    uan_number: ""
-  });
+  const meta = formData?.meta || {}; // ✅ UUID STORAGE
 
-  const {
-    fieldErrors,
-    handleFieldChange,
-    validateAllFields
-  } = useFormValidation();
+  const { fieldErrors, validateAllFields, handleFieldChange } = useFormValidation();
 
-  const [userUuid, setUserUuid] = useState<string | null>(null);
+  /* ================= SNAPSHOT ================= */
 
-  /* ================= LOAD EXISTING BANK + PF ================= */
+  const snapshotDoneRef = useRef(false);
+  const [originalData, setOriginalData] = useState<BankPfStorage | null>(null);
 
   useEffect(() => {
-
     if (!token) return;
+    if (snapshotDoneRef.current) return;
 
-    const loadData = async () => {
-
-      try {
-
-        /* STEP 1 — Verify token only once */
-
-        const tokenRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/token-verification/${token}`
-        );
-
-
-        if (!tokenRes.ok) {
-          // setDataLoaded(true);
-          return;
-        }
-
-        const uuid: string = await tokenRes.json();
-        setUserUuid(uuid);
-
-        /* STEP 2 — Load Bank & PF in parallel (FAST) */
-
-        const [bankRes, pfRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/bank/user/${uuid}`),
-          fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/pf/user/${uuid}`)
-        ]);
-        /* BANK DATA */
-        if (bankRes.ok) {
-          const bankData: ExistingBank = await bankRes.json();
-          setExistingBank(bankData);
-          setBankDetails({
-            account_holder_name: bankData.account_holder_name || "",
-            bank_name: bankData.bank_name || "",
-            branch_name: bankData.branch_name || "",
-            account_number: bankData.account_number || "",
-            confirm_account_number: bankData.account_number || "",
-            ifsc_code: bankData.ifsc_code || "",
-            account_type: bankData.account_type || ""
-          });
-        }
-        /* PF DATA */
-        if (pfRes.ok) {
-          const pfData: ExistingPf = await pfRes.json();
-          setExistingPf(pfData);
-          setPfDetails({
-            pf_member: pfData.pf_member,
-            uan_number: pfData.uan_number || ""
-          });
-        }
-      } catch (err) {
-        console.log("No bank/pf data found");
-      } 
-    };
-    loadData();
-  }, [token]);
+    if (formData?.bank.account_number || formData?.pf.uan_number) {
+      snapshotDoneRef.current = true;
+      setOriginalData(JSON.parse(JSON.stringify(formData)));
+    }
+  }, [token, formData]);
 
   /* ================= CHANGE DETECTION ================= */
 
-  const bankChanged = () => {
-
-    if (!existingBank) return true;
+  const hasChanges = () => {
+    if (!originalData) return true;
 
     return (
-      existingBank.account_holder_name !== bankDetails.account_holder_name ||
-      existingBank.bank_name !== bankDetails.bank_name ||
-      existingBank.branch_name !== bankDetails.branch_name ||
-      existingBank.account_number !== bankDetails.account_number ||
-      existingBank.ifsc_code !== bankDetails.ifsc_code ||
-      existingBank.account_type !== bankDetails.account_type
-    );
-  };
-
-  const pfChanged = () => {
-    if (!existingPf) return true;
-    return (
-      existingPf.pf_member !== pfDetails.pf_member ||
-      (existingPf.uan_number || "") !== (pfDetails.uan_number || "")
+      originalData.bank.account_holder_name !== bankDetails.account_holder_name ||
+      originalData.bank.bank_name !== bankDetails.bank_name ||
+      originalData.bank.branch_name !== bankDetails.branch_name ||
+      originalData.bank.account_number !== bankDetails.account_number ||
+      originalData.bank.ifsc_code !== bankDetails.ifsc_code ||
+      originalData.bank.account_type !== bankDetails.account_type ||
+      originalData.pf.pf_member !== pfDetails.pf_member ||
+      (originalData.pf.uan_number || "") !== (pfDetails.uan_number || "")
     );
   };
 
@@ -196,137 +138,135 @@ export default function BankPfDetailsPage() {
 
   const handleSaveAndContinue = async () => {
     if (loading) return;
-    const isValid = validateAllFields(
-      { ...bankDetails },
-      bankValidationRules
-    );
+
+    const isValid = validateAllFields({ ...bankDetails }, bankValidationRules);
     if (!isValid) return;
+
+    const newErrors: Record<string, string> = {};
+
     if (bankDetails.account_number !== bankDetails.confirm_account_number) {
-      toast.error("Account numbers do not match");
-      return;
+      newErrors.confirm_account_number = "Account numbers do not match";
     }
+
     if (pfDetails.pf_member && !/^\d{12}$/.test(pfDetails.uan_number || "")) {
-      toast.error("UAN must be a 12 digit number");
+      newErrors.uan_number = "UAN must be a 12 digit number";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setCustomErrors(newErrors);
+      toast.error("Please fix errors");
       return;
     }
+
     setLoading(true);
     setGlobalLoading(true);
+
     try {
-      // const tokenRes = await fetch(
-      //   `${process.env.NEXT_PUBLIC_API_BASE_URL}/token-verification/${token}`
-      // );
-      // const user_uuid: string = await tokenRes.json();
-      const user_uuid = userUuid;
-      if (!user_uuid) {
-        toast.error("User not found");
+      const tokenRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/token-verification/${token}`);
+
+      if (!tokenRes.ok) {
+        toast.error("Session expired");
         return;
       }
-      if (!bankChanged() && !pfChanged()) {
-        toast("No changes detected",{ icon: "ℹ️" });
+
+      const user_uuid: string = await tokenRes.json();
+
+      if (!hasChanges()) {
+        toast("No changes detected", { icon: "ℹ️" });
         router.push(`/onboarding/${token}/preview-page`);
         return;
       }
 
       /* ================= BANK ================= */
 
-      if (!existingBank) {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/bank`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_uuid,
-            account_holder_name: bankDetails.account_holder_name,
-            bank_name: bankDetails.bank_name,
-            branch_name: bankDetails.branch_name,
-            account_number: bankDetails.account_number,
-            ifsc_code: bankDetails.ifsc_code,
-            account_type: bankDetails.account_type
-          })
-        });
+      const bankPayload = {
+        user_uuid,
+        account_holder_name: bankDetails.account_holder_name,
+        bank_name: bankDetails.bank_name,
+        branch_name: bankDetails.branch_name,
+        account_number: bankDetails.account_number,
+        ifsc_code: bankDetails.ifsc_code,
+        account_type: bankDetails.account_type
+      };
 
-        const data = await res.json();
-        setExistingBank({ bank_uuid: data.bank_uuid, user_uuid, ...bankDetails });
+      const bankEndpoint = meta.bank_uuid
+        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/bank/${meta.bank_uuid}`
+        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/bank`;
 
-      } else if (bankChanged()) {
+      const bankMethod = meta.bank_uuid ? "PUT" : "POST";
 
-        await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/bank/${existingBank.bank_uuid}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_uuid,
-            account_holder_name: bankDetails.account_holder_name,
-            bank_name: bankDetails.bank_name,
-            branch_name: bankDetails.branch_name,
-            account_number: bankDetails.account_number,
-            ifsc_code: bankDetails.ifsc_code,
-            account_type: bankDetails.account_type
-          })
-        });
+      const bankRes = await fetch(bankEndpoint, {
+        method: bankMethod,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bankPayload)
+      });
 
+      if (!bankRes.ok) throw new Error("Bank API failed");
+
+      const bankData = await bankRes.json();
+
+      if (!meta.bank_uuid) {
+        setFormData(prev => ({
+          ...prev,
+          meta: {
+            ...prev?.meta,
+            bank_uuid: bankData.bank_uuid
+          }
+        }));
       }
 
       /* ================= PF ================= */
 
-      if (pfDetails.pf_member) {
+      const pfPayload = {
+        user_uuid,
+        pf_member: pfDetails.pf_member,
+        uan_number: pfDetails.pf_member ? pfDetails.uan_number : null
+      };
 
-        if (!existingPf) {
+      const pfEndpoint = meta.pf_uuid
+        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/pf/${meta.pf_uuid}`
+        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/pf`;
 
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/pf`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              user_uuid,
-              pf_member: true,
-              uan_number: pfDetails.uan_number
-            })
-          });
+      const pfMethod = meta.pf_uuid ? "PUT" : "POST";
 
-          const data = await res.json();
-          setExistingPf({ pf_uuid: data.pf_uuid, user_uuid, pf_member: true, uan_number: pfDetails.uan_number });
+      const pfRes = await fetch(pfEndpoint, {
+        method: pfMethod,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pfPayload)
+      });
 
-        } else if (pfChanged()) {
+      if (!pfRes.ok) throw new Error("PF API failed");
 
-          await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/pf/${existingPf.pf_uuid}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              user_uuid,
-              pf_member: true,
-              uan_number: pfDetails.uan_number
-            })
-          });
+      const pfData = await pfRes.json();
 
-        } else if (existingPf) {
-
-          await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/pf/${existingPf.pf_uuid}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              user_uuid,
-              pf_member: false,
-              uan_number: null
-            })
-          });
-        }
-
+      if (!meta.pf_uuid) {
+        setFormData(prev => ({
+          ...prev,
+          meta: {
+            ...prev?.meta,
+            pf_uuid: pfData.pf_uuid
+          }
+        }));
       }
 
-      toast.success("Bank & PF details processed successfully");
+      setOriginalData(JSON.parse(JSON.stringify(formData)));
 
+      toast.success("Saved successfully");
       router.push(`/onboarding/${token}/preview-page`);
 
-    } catch (err) {
+    } catch (err: unknown) {
+      let message = "Failed to save";
 
-      toast.error("Failed to save bank & PF details");
-      setError("An error occurred while saving bank or PF details.");
+      if (err instanceof Error) {
+        message = err.message;
+      }
 
+      toast.error(message);
+      setError(message);
     } finally {
-
       setLoading(false);
       setGlobalLoading(false);
-
     }
-
   };
 
   return (
@@ -343,7 +283,7 @@ export default function BankPfDetailsPage() {
 
         <div className="space-y-8">
 
-          {/* BANK DETAILS */}
+          {/* ================= BANK DETAILS ================= */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -351,7 +291,10 @@ export default function BankPfDetailsPage() {
               <TextInput
                 value={bankDetails.account_holder_name}
                 onChange={(e) => {
-                  setBankDetails({ ...bankDetails, account_holder_name: e.target.value });
+                  setFormData(prev => ({
+                    ...prev,
+                    bank: { ...prev.bank, account_holder_name: e.target.value }
+                  }));
                   handleFieldChange("account_holder_name", e.target.value, bankValidationRules.account_holder_name);
                 }}
               />
@@ -361,7 +304,10 @@ export default function BankPfDetailsPage() {
               <TextInput
                 value={bankDetails.bank_name}
                 onChange={(e) => {
-                  setBankDetails({ ...bankDetails, bank_name: e.target.value });
+                  setFormData(prev => ({
+                    ...prev,
+                    bank: { ...prev.bank, bank_name: e.target.value }
+                  }));
                   handleFieldChange("bank_name", e.target.value, bankValidationRules.bank_name);
                 }}
               />
@@ -371,7 +317,10 @@ export default function BankPfDetailsPage() {
               <TextInput
                 value={bankDetails.branch_name}
                 onChange={(e) =>
-                  setBankDetails({ ...bankDetails, branch_name: e.target.value })
+                  setFormData(prev => ({
+                    ...prev,
+                    bank: { ...prev.bank, branch_name: e.target.value }
+                  }))
                 }
               />
             </FormField>
@@ -380,17 +329,23 @@ export default function BankPfDetailsPage() {
               <TextInput
                 value={bankDetails.account_number}
                 onChange={(e) => {
-                  setBankDetails({ ...bankDetails, account_number: e.target.value });
+                  setFormData(prev => ({
+                    ...prev,
+                    bank: { ...prev.bank, account_number: e.target.value }
+                  }));
                   handleFieldChange("account_number", e.target.value, bankValidationRules.account_number);
                 }}
               />
             </FormField>
 
-            <FormField label="Confirm Account Number" required>
+            <FormField label="Confirm Account Number" required error={customErrors.confirm_account_number}>
               <TextInput
                 value={bankDetails.confirm_account_number}
                 onChange={(e) =>
-                  setBankDetails({ ...bankDetails, confirm_account_number: e.target.value })
+                  setFormData(prev => ({
+                    ...prev,
+                    bank: { ...prev.bank, confirm_account_number: e.target.value }
+                  }))
                 }
               />
             </FormField>
@@ -401,7 +356,10 @@ export default function BankPfDetailsPage() {
                 value={bankDetails.ifsc_code}
                 onChange={(e) => {
                   const val = e.target.value.toUpperCase();
-                  setBankDetails({ ...bankDetails, ifsc_code: val });
+                  setFormData(prev => ({
+                    ...prev,
+                    bank: { ...prev.bank, ifsc_code: val }
+                  }));
                   handleFieldChange("ifsc_code", val, bankValidationRules.ifsc_code);
                 }}
               />
@@ -411,7 +369,10 @@ export default function BankPfDetailsPage() {
               <SelectInput
                 value={bankDetails.account_type}
                 onChange={(e) => {
-                  setBankDetails({ ...bankDetails, account_type: e.target.value });
+                  setFormData(prev => ({
+                    ...prev,
+                    bank: { ...prev.bank, account_type: e.target.value }
+                  }));
                   handleFieldChange("account_type", e.target.value, bankValidationRules.account_type);
                 }}
               >
@@ -423,7 +384,7 @@ export default function BankPfDetailsPage() {
 
           </div>
 
-          {/* PF DETAILS */}
+          {/* ================= PF DETAILS ================= */}
 
           <div className="mt-10 border-t border-indigo-100 pt-6">
 
@@ -438,7 +399,10 @@ export default function BankPfDetailsPage() {
                   type="radio"
                   checked={pfDetails.pf_member === true}
                   onChange={() =>
-                    setPfDetails({ ...pfDetails, pf_member: true })
+                    setFormData(prev => ({
+                      ...prev,
+                      pf: { ...prev.pf, pf_member: true }
+                    }))
                   }
                 />
                 Yes
@@ -449,7 +413,10 @@ export default function BankPfDetailsPage() {
                   type="radio"
                   checked={pfDetails.pf_member === false}
                   onChange={() =>
-                    setPfDetails({ pf_member: false, uan_number: "" })
+                    setFormData(prev => ({
+                      ...prev,
+                      pf: { pf_member: false, uan_number: "" }
+                    }))
                   }
                 />
                 No
@@ -458,12 +425,15 @@ export default function BankPfDetailsPage() {
             </div>
 
             {pfDetails.pf_member && (
-              <FormField label="UAN Number" required>
+              <FormField label="UAN Number" required error={customErrors.uan_number}>
                 <TextInput
                   placeholder="Enter 12 digit UAN"
                   value={pfDetails.uan_number}
                   onChange={(e) =>
-                    setPfDetails({ ...pfDetails, uan_number: e.target.value })
+                    setFormData(prev => ({
+                      ...prev,
+                      pf: { ...prev.pf, uan_number: e.target.value }
+                    }))
                   }
                 />
               </FormField>
@@ -471,9 +441,10 @@ export default function BankPfDetailsPage() {
 
           </div>
 
-          {/* BUTTONS */}
+          {/* ================= BUTTONS ================= */}
 
           <div className="flex justify-between items-center pt-8 border-t border-indigo-100">
+
             <Button
               variant="secondary"
               onClick={() => {
@@ -495,6 +466,7 @@ export default function BankPfDetailsPage() {
             >
               Save & Continue
             </Button>
+
           </div>
 
         </div>
@@ -504,3 +476,4 @@ export default function BankPfDetailsPage() {
     </div>
   );
 }
+ 

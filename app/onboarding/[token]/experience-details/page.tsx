@@ -416,9 +416,22 @@ export default function ExperienceDetailsPage() {
                             type="checkbox"
                             className="w-5 h-5 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500"
                             checked={exp.is_current}
-                            onChange={(e) => updateExperience(index, "is_current", e.target.checked)}
+                            onChange={(e) => {
+                              const isChecked = e.target.checked;
+
+                              const updated = [...experienceList];
+                              updated[index] = {
+                                ...updated[index],
+                                is_current: isChecked,
+                                end_date: isChecked ? "" : updated[index].end_date, // ✅ clear end date
+                              };
+
+                              setExperienceList(updated);
+                            }}
                           />
-                          <span className="text-indigo-900 font-medium group-hover:text-indigo-700">Currently working here</span>
+                          <span className="text-indigo-900 font-medium group-hover:text-indigo-700">
+                            Currently working here
+                          </span>
                         </label>
                       </div>
 
