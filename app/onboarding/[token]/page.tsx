@@ -159,7 +159,7 @@ export default function Page() {
             <button
               onClick={handleSendOtp}
               disabled={loading}
-              className="w-full mt-4 bg-indigo-600 text-white py-2 rounded-lg disabled:opacity-50"
+              className="w-full mt-4 bg-[#1e3a8a] hover:bg-blue-800 transition-colors"
             >
               {loading ? "Sending..." : "Send OTP"}
             </button>
@@ -196,7 +196,7 @@ export default function Page() {
             <button
               onClick={handleVerifyOtp}
               disabled={loading}
-              className="w-full bg-indigo-600 text-white py-2 rounded-lg disabled:opacity-50"
+              className="w-full bg-[#1e3a8a] text-white py-2 rounded-lg disabled:opacity-50"
             >
               {loading ? "Verifying..." : "Verify OTP"}
             </button>
@@ -207,7 +207,7 @@ export default function Page() {
               ) : (
                 <button
                   onClick={handleSendOtp}
-                  className="text-indigo-600 hover:underline"
+                  className="text-[#1e3a8a] hover:underline"
                 >
                   Resend OTP
                 </button>

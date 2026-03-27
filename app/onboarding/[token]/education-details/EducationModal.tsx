@@ -74,12 +74,12 @@ export default function EducationModal({
       <div className="bg-indigo-50/50 rounded-2xl p-8 border border-indigo-100 shadow-sm">
         <div className="flex items-center justify-between mb-8">
           <h3 className="text-2xl font-bold text-indigo-900 flex items-center gap-3">
-            <span className="w-1.5 h-8 bg-indigo-600 rounded-full"></span>
+            <span className="w-1.5 h-8 bg-[#1e3a8a] rounded-full"></span>
             {activeLevel} – Details
           </h3>
           <button
             onClick={onCancel}
-            className="text-sm font-bold text-indigo-400 hover:text-indigo-600 transition-colors uppercase tracking-widest"
+            className="text-sm font-bold text-[#1e3a8a] hover:text-blue-800 transition-colors uppercase tracking-widest"
           >
             Cancel Edit
           </button>
@@ -195,7 +195,7 @@ export default function EducationModal({
 
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center justify-between gap-2">
-                        <label className="flex-1 flex items-center px-3 py-2 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded-lg cursor-pointer hover:bg-indigo-100 transition-all text-xs font-bold shadow-sm">
+                        <label className="flex-1 flex items-center px-3 py-2 bg-blue-50 border-blue-100 text-[#1e3a8a] hover:bg-blue-100 transition-all text-xs font-bold shadow-sm">
                           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M16 16l-4-4m0 0l-4 4m4-4v12" />
                           </svg>
@@ -214,7 +214,7 @@ export default function EducationModal({
                           <button
                             type="button"
                             onClick={() => openDocumentInNewTab(existingFile || undefined, uploadedDoc?.file_path)}
-                            className="p-2 text-indigo-600 bg-white border border-indigo-100 hover:bg-indigo-50 rounded-lg transition-all shadow-sm"
+                            className="p-2 text-[#1e3a8a] bg-white border-blue-100 hover:bg-blue-50 rounded-lg transition-all shadow-sm"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

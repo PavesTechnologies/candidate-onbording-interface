@@ -339,14 +339,19 @@ export default function IdentityDocumentsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white py-8">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-200/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="relative mx-auto max-w-5xl rounded-2xl bg-white/95 backdrop-blur-lg p-8 shadow-xl border border-indigo-100">
-        <h2 className="mb-6 text-3xl font-bold text-indigo-900">Identity Documents</h2>
+    <div className="py-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+        <div className="flex items-center justify-between mb-8 border-b pb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-[#1e3a8a]">Identity Documents</h2>
+            <p className="text-sm text-gray-500 mt-1">Please upload your KYC and identity verification documents</p>
+          </div>
+          <div className="hidden sm:block">
+            <span className="bg-blue-50 text-[#1e3a8a] text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
+              Step 3 of 6
+            </span>
+          </div>
+        </div>
 
         {error && <ErrorAlert message={error} onClose={() => setError("")} />}
 
@@ -404,7 +409,7 @@ export default function IdentityDocumentsPage() {
                       <div className="space-y-2">
                         <label className="text-sm font-medium text-indigo-900">Upload Document</label>
                         <div className="flex flex-wrap items-center gap-3">
-                          <label className="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg cursor-pointer hover:bg-indigo-700 transition-colors text-sm font-medium shadow-sm">
+                          <label className="flex items-center justify-center px-4 py-2 bg-[#1e3a8a] hover:bg-blue-800 transition-colors text-sm font-medium shadow-sm">
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M16 16l-4-4m0 0l-4 4m4-4v12" />
                             </svg>
@@ -431,7 +436,7 @@ export default function IdentityDocumentsPage() {
                           )}
                         </div>
                         {hasFile ? (
-                          <p className="text-xs text-indigo-600 truncate max-w-xs">{fileName}</p>
+                          <p className="text-xs text-[#1e3a8a] truncate max-w-xs">{fileName}</p>
                         ) : fieldErrors[doc.identity_type_uuid + "_file"] ? (
                           <p className="text-xs text-red-500">{fieldErrors[doc.identity_type_uuid + "_file"]}</p>
                         ) : (
@@ -446,7 +451,7 @@ export default function IdentityDocumentsPage() {
 
           {selectedCountry && identityTypes.length === 0 && (
             <div className="text-center py-12 bg-indigo-50/30 rounded-2xl border border-dashed border-indigo-200">
-              <p className="text-indigo-600 italic">No identity documents required for this country.</p>
+              <p className="text-[#1e3a8a] italic">No identity documents required for this country.</p>
             </div>
           )}
 

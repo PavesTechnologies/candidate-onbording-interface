@@ -283,14 +283,19 @@ export default function ExperienceDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white py-8 px-4">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-200/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="relative mx-auto max-w-5xl rounded-2xl bg-white/95 backdrop-blur-lg p-8 shadow-xl border border-indigo-100">
-        <h2 className="mb-6 text-3xl font-bold text-indigo-900">Work Experience</h2>
+    <div className="py-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+        <div className="flex items-center justify-between mb-8 border-b pb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-[#1e3a8a]">Work Experience</h2>
+            <p className="text-sm text-gray-500 mt-1">Please provide your professional background and work history</p>
+          </div>
+          <div className="hidden sm:block">
+            <span className="bg-blue-50 text-[#1e3a8a] text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
+              Step 5 of 6
+            </span>
+          </div>
+        </div>
 
         {error && <ErrorAlert message={error} onClose={() => setError("")} />}
 
@@ -311,7 +316,7 @@ export default function ExperienceDetailsPage() {
                       if (experienceList.length === 0) addExperience();
                     }}
                   />
-                  <div className="w-6 h-6 border-2 border-indigo-300 rounded-full peer-checked:border-indigo-600 peer-checked:bg-indigo-600 transition-all"></div>
+                  <div className="w-6 h-6 border-gray-300 peer-checked:border-[#1e3a8a] peer-checked:bg-[#1e3a8a]"></div>
                   <div className="absolute w-2 h-2 bg-white rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></div>
                 </div>
                 <span className="text-indigo-900 font-medium group-hover:text-indigo-700">Yes, I am experienced</span>
@@ -325,7 +330,7 @@ export default function ExperienceDetailsPage() {
                     checked={hasExperience === false}
                     onChange={() => setHasExperience(false)}
                   />
-                  <div className="w-6 h-6 border-2 border-indigo-300 rounded-full peer-checked:border-indigo-600 peer-checked:bg-indigo-600 transition-all"></div>
+                  <div className="w-6 h-6 border-gray-300 peer-checked:border-[#1e3a8a] peer-checked:bg-[#1e3a8a]"></div>
                   <div className="absolute w-2 h-2 bg-white rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></div>
                 </div>
                 <span className="text-indigo-900 font-medium group-hover:text-indigo-700">No, I am a fresher</span>
@@ -392,7 +397,7 @@ export default function ExperienceDetailsPage() {
                           onChange={(e) => updateExperience(index, "end_date", e.target.value)}
                         />
                         {exp.start_date && exp.end_date && !exp.is_current && (
-                          <p className="mt-1 text-xs text-indigo-600 font-medium">
+                          <p className="mt-1 text-xs text-[#1e3a8a] font-medium">
                             Duration: {calculateDuration(exp.start_date, exp.end_date)}
                           </p>
                         )}
@@ -414,7 +419,7 @@ export default function ExperienceDetailsPage() {
                         <label className="flex items-center gap-3 cursor-pointer group w-fit">
                           <input
                             type="checkbox"
-                            className="w-5 h-5 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500"
+                            className="w-5 h-5 rounded border-indigo-300 text-[#1e3a8a] focus:ring-indigo-500"
                             checked={exp.is_current}
                             onChange={(e) => {
                               const isChecked = e.target.checked;
@@ -465,7 +470,7 @@ export default function ExperienceDetailsPage() {
                                   <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Required</span>
                                 </label>
                                 <div className="flex flex-wrap items-center gap-3">
-                                  <label className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg cursor-pointer hover:bg-indigo-700 transition-colors text-sm font-medium shadow-sm">
+                                  <label className="flex items-center px-4 py-2 bg-[#1e3a8a] hover:bg-blue-800 transition-colors text-sm font-medium shadow-sm">
                                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M16 16l-4-4m0 0l-4 4m4-4v12" />
                                     </svg>
@@ -503,7 +508,7 @@ export default function ExperienceDetailsPage() {
 
               <button
                 onClick={addExperience}
-                className="w-full py-4 border-2 border-dashed border-indigo-200 rounded-2xl text-indigo-600 font-semibold hover:bg-indigo-50 hover:border-indigo-300 transition-all flex items-center justify-center gap-2"
+                className="w-full py-4 border-2 border-dashed border-[#1e3a8a]/20 text-[#1e3a8a] hover:bg-blue-50 hover:border-[#1e3a8a]"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />

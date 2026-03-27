@@ -381,21 +381,26 @@ export default function AddressDetailsPage() {
   /* ===================== UI ===================== */
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white py-8">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-200/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="relative mx-auto max-w-5xl rounded-2xl bg-white/95 backdrop-blur-lg p-8 shadow-xl border border-indigo-100">
-        <h2 className="mb-6 text-3xl font-bold text-indigo-900">Address Details</h2>
+    <div className="py-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+        <div className="flex items-center justify-between mb-8 border-b pb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-[#1e3a8a]">Address Details</h2>
+            <p className="text-sm text-gray-500 mt-1">Please provide your permanent and current residential address</p>
+          </div>
+          <div className="hidden sm:block">
+            <span className="bg-blue-50 text-[#1e3a8a] text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
+              Step 2 of 6
+            </span>
+          </div>
+        </div>
 
         {error && <ErrorAlert message={error} onClose={() => setError("")} />}
 
-        <div className="space-y-8">
+        <div className="space-y-10">
           {/* Permanent Address Section */}
           <section>
-            <h3 className="mb-4 text-xl font-semibold text-indigo-900 flex items-center gap-2">
+            <h3 className="mb-4 text-xl font-bold text-[#1e3a8a] flex items-center gap-2">
               🏠 Permanent Address
             </h3>
             <AddressFormUI
@@ -407,23 +412,23 @@ export default function AddressDetailsPage() {
           </section>
 
           {/* Same as Permanent Checkbox */}
-          <div className="flex items-center gap-3 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+          <div className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-xl border border-blue-100">
             <input
               type="checkbox"
               id="sameAsPermanent"
-              className="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 cursor-pointer"
+              className="w-5 h-5 text-[#1e3a8a] rounded border-gray-300 focus:ring-[#1e3a8a] cursor-pointer"
               checked={sameAsPermanent}
               onChange={(e) => handleSameAsPermanent(e.target.checked)}
             />
-            <label htmlFor="sameAsPermanent" className="text-indigo-900 font-medium cursor-pointer">
+            <label htmlFor="sameAsPermanent" className="text-[#1e3a8a] font-medium cursor-pointer">
               Current Address is same as Permanent Address
             </label>
           </div>
 
           {/* Current Address Section */}
           {!sameAsPermanent && (
-            <section className="pt-4 border-t border-indigo-100">
-              <h3 className="mb-4 text-xl font-semibold text-indigo-900 flex items-center gap-2">
+            <section className="pt-4 border-t border-gray-100">
+              <h3 className="mb-4 text-xl font-bold text-[#1e3a8a] flex items-center gap-2">
                 📍 Current Address
               </h3>
               <AddressFormUI
@@ -478,7 +483,7 @@ function AddressFormUI({
   errors: Record<string, string>;
 }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
       <FormField label="Address Line 1" required error={errors.address_line1} className="md:col-span-2">
         <TextInput
           name="address_line1"

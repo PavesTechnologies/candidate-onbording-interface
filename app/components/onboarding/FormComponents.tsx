@@ -19,9 +19,9 @@ export function FormField({
 }: FormFieldProps) {
   return (
     <div className={`mb-4 ${className}`}>
-      <label className="block mb-2 text-sm font-semibold text-indigo-900 dark:text-gray-200">
+      <label className="block mb-2 text-sm font-bold text-[#1e3a8a] uppercase tracking-wide">
         {label}
-        {required && <span className="ml-1 text-rose-600 dark:text-rose-500 font-bold">*</span>}
+        {required && <span className="ml-1 text-red-500 font-bold">*</span>}
       </label>
       <div className="relative">
         {children}
@@ -54,8 +54,8 @@ export function TextInput({
           {...props}
           className={`w-full px-4 py-2.5 text-sm font-medium border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
             error
-              ? "border-rose-400 bg-rose-50 dark:bg-rose-950/20 focus:ring-rose-500 focus:ring-offset-rose-100 dark:focus:ring-offset-gray-900"
-              : "border-indigo-300 dark:border-indigo-500/30 bg-white/90 dark:bg-white/10 hover:border-indigo-400 dark:hover:border-indigo-400/50 focus:ring-indigo-500 focus:ring-offset-white dark:focus:ring-offset-gray-900"
+              ? "border-red-400 bg-red-50 dark:bg-red-950/20 focus:ring-red-500"
+              : "border-gray-300 dark:border-gray-700 bg-white hover:border-[#1e3a8a] focus:ring-[#1e3a8a] focus:border-[#1e3a8a]"
           }`}
         />
       </FormField>
@@ -67,8 +67,8 @@ export function TextInput({
       {...props}
       className={`w-full px-4 py-2.5 text-sm font-medium border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
         error
-          ? "border-rose-400 bg-rose-50 dark:bg-rose-950/20 focus:ring-rose-500 dark:focus:ring-offset-gray-900"
-          : "border-indigo-300 dark:border-indigo-500/30 bg-white/90 dark:bg-white/10 hover:border-indigo-400 dark:hover:border-indigo-400/50 focus:ring-indigo-500 dark:focus:ring-offset-gray-900"
+          ? "border-red-400 bg-red-50 dark:bg-red-950/20 focus:ring-red-500"
+          : "border-gray-300 dark:border-gray-700 bg-white hover:border-[#1e3a8a] focus:ring-[#1e3a8a] focus:border-[#1e3a8a]"
       }`}
     />
   );
@@ -96,13 +96,13 @@ export function SelectInput({
       <FormField label={label} required={required} error={error}>
         <select
           {...props}
-          className={`w-full px-4 py-2.5 text-sm font-medium border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 appearance-none cursor-pointer text-gray-900 dark:text-white option:bg-indigo-600 option:text-white ${
+          className={`w-full px-4 py-2.5 text-sm font-medium border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 appearance-none cursor-pointer text-gray-900 dark:text-white option:bg-[#1e3a8a] option:text-white ${
             error
-              ? "border-rose-400 bg-rose-50 dark:bg-rose-950/20 focus:ring-rose-500 focus:ring-offset-rose-100 dark:focus:ring-offset-gray-900"
-              : "border-indigo-300 dark:border-indigo-500/30 bg-white/90 dark:bg-white/10 hover:border-indigo-400 dark:hover:border-indigo-400/50 focus:ring-indigo-500 focus:ring-offset-white dark:focus:ring-offset-gray-900"
+              ? "border-red-400 bg-red-50 dark:bg-red-950/20 focus:ring-red-500"
+              : "border-gray-300 dark:border-gray-700 bg-white hover:border-[#1e3a8a] focus:ring-[#1e3a8a] focus:border-[#1e3a8a]"
           }`}
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%234F46E5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")`,
+            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%231e3a8a' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")`,
 
             backgroundPosition: 'right 1rem center',
             backgroundRepeat: 'no-repeat',
@@ -125,13 +125,13 @@ export function SelectInput({
   return (
     <select
       {...props}
-      className={`w-full px-4 py-2.5 text-sm font-medium border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 appearance-none cursor-pointer text-gray-900 dark:text-white option:bg-indigo-600 option:text-white ${
+      className={`w-full px-4 py-2.5 text-sm font-medium border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 appearance-none cursor-pointer text-gray-900 dark:text-white option:bg-[#1e3a8a] option:text-white ${
         error
-          ? "border-rose-400 bg-rose-50 dark:bg-rose-950/20 focus:ring-rose-500 dark:focus:ring-offset-gray-900"
-          : "border-indigo-300 dark:border-indigo-500/30 bg-white/90 dark:bg-white/10 hover:border-indigo-400 dark:hover:border-indigo-400/50 focus:ring-indigo-500 dark:focus:ring-offset-gray-900"
+          ? "border-red-400 bg-red-50 dark:bg-red-950/20 focus:ring-red-500"
+          : "border-gray-300 dark:border-gray-700 bg-white hover:border-[#1e3a8a] focus:ring-[#1e3a8a] focus:border-[#1e3a8a]"
       }`}
       style={{
-        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%234F46E5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")`,
+        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%231e3a8a' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e")`,
         backgroundPosition: 'right 1rem center',
         backgroundRepeat: 'no-repeat',
         backgroundSize: '1.5em 1.5em',
@@ -157,10 +157,10 @@ export function CheckboxInput({ label, error, ...props }: CheckboxInputProps) {
         <input
           type="checkbox"
           {...props}
-          className={`w-5 h-5 rounded-lg border-2 transition-all duration-200 cursor-pointer accent-indigo-600 ${
+          className={`w-5 h-5 rounded border-2 transition-all duration-200 cursor-pointer accent-[#1e3a8a] ${
             error
-              ? "border-rose-400"
-              : "border-indigo-300 hover:border-indigo-400"
+              ? "border-red-400"
+              : "border-gray-300 hover:border-[#1e3a8a]"
           }`}
         />
         <span className="text-sm font-medium text-gray-900 dark:text-gray-200">{label}</span>
@@ -189,7 +189,7 @@ export function FileInput({
     return (
       <FormField label={label} required={required} error={error}>
         <div className="flex gap-3 items-center">
-          <label className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white text-sm font-semibold rounded-xl hover:from-indigo-700 hover:to-indigo-800 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl">
+          <label className="px-6 py-3 bg-[#1e3a8a] hover:bg-blue-800 text-white text-sm font-bold rounded-lg cursor-pointer transition-all duration-200 shadow hover:shadow-lg">
             📁 Choose File
             <input
               type="file"
@@ -209,7 +209,7 @@ export function FileInput({
 
   return (
     <div className="flex gap-3 items-center">
-      <label className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white text-sm font-semibold rounded-xl hover:from-indigo-700 hover:to-indigo-800 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl">
+      <label className="px-6 py-3 bg-[#1e3a8a] hover:bg-blue-800 text-white text-sm font-bold rounded-lg cursor-pointer transition-all duration-200 shadow hover:shadow-lg">
         📁 Choose File
         <input
           type="file"

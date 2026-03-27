@@ -99,7 +99,7 @@ export default function EducationTimeline({
                     : showExpandedDetails
                       ? "bg-amber-500 text-white shadow-amber-100"
                       : inProgress
-                        ? "bg-indigo-600 text-white shadow-indigo-100"
+                        ? "bg-[#1e3a8a] text-white shadow-blue-100"
                         : "bg-indigo-50 text-indigo-300 border border-indigo-100"
                 }`}
               >
@@ -143,7 +143,7 @@ export default function EducationTimeline({
 
                   <button
                     onClick={() => onOpenLevel(level)}
-                    className="self-start px-6 py-2 bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white rounded-xl text-sm font-bold transition-all duration-300 border border-indigo-100 hover:border-indigo-600 shadow-sm"
+                    className="self-start px-6 py-2 bg-blue-50 hover:bg-[#1e3a8a] text-[#1e3a8a] hover:text-white border-blue-100 hover:border-[#1e3a8a] shadow-sm transition-all duration-300"
                   >
                     {completed ? "Update Info" : "Add Details"}
                   </button>
@@ -224,7 +224,7 @@ export default function EducationTimeline({
             <button
               type="button"
               onClick={() => setShowDropdown(!showDropdown)}
-              className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[1.25rem] text-sm font-bold shadow-indigo-100 shadow-xl transition-all duration-300 flex items-center gap-3 active:scale-95"
+              className="px-8 py-3 bg-[#1e3a8a] hover:bg-blue-800 text-white rounded-[1.25rem] text-sm font-bold shadow-blue-100 shadow-xl transition-all duration-300 flex items-center gap-3 active:scale-95"
             >
               Add New Education Level
               <svg className={`w-4 h-4 transition-transform duration-300 ${showDropdown ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">

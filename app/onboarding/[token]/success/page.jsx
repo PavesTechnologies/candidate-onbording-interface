@@ -19,18 +19,18 @@ export default function SuccessPage() {
         </div>
 
         <h1 className="text-3xl md:text-5xl font-black text-indigo-950 tracking-tight mb-8 leading-[1.1]">
-          Onboarding <span className="text-indigo-600">Successfully</span> <br />
+          Onboarding <span className="text-[#1e3a8a]">Successfully</span> <br />
           Complete
         </h1>
 
-        <div className="h-2 w-32 bg-indigo-600 rounded-full mx-auto mb-12 shadow-sm shadow-indigo-200"></div>
+        <div className="h-2 w-32 bg-[#1e3a8a] shadow-blue-100 shadow-xl"></div>
 
         <p className="text-1xl md:text-1xl text-indigo-900/60 font-semibold leading-relaxed max-w-2xl mx-auto">
           We've received all your information. Our team is already reviewing it and will reach out shortly via email.
         </p>
 
         <div className="mt-24 space-y-4">
-          <div className="inline-flex items-center gap-2 px-6 py-2 bg-indigo-50 rounded-full text-indigo-600 text-xs font-bold uppercase tracking-widest border border-indigo-100">
+          <div className="inline-flex items-center gap-2 px-6 py-2 bg-blue-50 text-[#1e3a8a] border-blue-100">
             <span className="w-2 h-2 bg-indigo-600 rounded-full animate-ping"></span>
             Review in Progress
           </div>

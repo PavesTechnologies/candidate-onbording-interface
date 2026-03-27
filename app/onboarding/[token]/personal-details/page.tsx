@@ -420,17 +420,19 @@ emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
     /* ===================== UI ===================== */
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white py-8">
-      {/* Background accent elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-200/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="relative mx-auto max-w-5xl rounded-2xl bg-white/95 backdrop-blur-lg p-8 shadow-xl border border-indigo-100">
-        <h2 className="mb-6 text-3xl font-bold text-indigo-900">
-          Personal Details
-        </h2>
+    <div className="py-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+        <div className="flex items-center justify-between mb-8 border-b pb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-[#1e3a8a]">Personal Information</h2>
+            <p className="text-sm text-gray-500 mt-1">Enter your personal information as mentioned in your Aadhar card</p>
+          </div>
+          <div className="hidden sm:block">
+            <span className="bg-blue-50 text-[#1e3a8a] text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
+              Step 1 of 6
+            </span>
+          </div>
+        </div>
 
         {error && <ErrorAlert message={error} onClose={() => setError("")} />}
 
@@ -660,7 +662,7 @@ emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
             >
               {loading ? "Saving..." : "Save & Continue"}
             </Button>
-          </div>
+           </div>
         </form>
       </div>
     </div>

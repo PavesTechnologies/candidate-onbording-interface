@@ -425,19 +425,14 @@ export default function OnboardingPreviewPage() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white py-8 px-4">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-200/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="relative mx-auto max-w-5xl rounded-2xl bg-white/95 backdrop-blur-lg p-8 shadow-xl border border-indigo-100">
-        <div className="mb-10 text-center">
-          <h1 className="text-4xl font-extrabold text-indigo-900 mb-2">Review Your Onboarding</h1>
-          <p className="text-indigo-600 font-medium">Please verify all information before final submission</p>
+    <div className="py-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+        <div className="mb-10 text-center border-b pb-8">
+          <h1 className="text-3xl font-extrabold text-[#1e3a8a] mb-2">Review Your Onboarding</h1>
+          <p className="text-gray-500 font-medium">Please verify all information before final submission</p>
           {!isDataComplete && (
             <p className="mt-4 text-red-500 font-medium flex items-center justify-center gap-2">
-              <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+              <span className="w-2 h-2 bg-red-50 rounded-full animate-pulse border border-red-500"></span>
               Some sections are incomplete
             </p>
           )}
@@ -492,13 +487,13 @@ export default function OnboardingPreviewPage() {
               {identityList.map((doc, idx) => (
                 <div key={idx} className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 flex items-start gap-4">
                   <div className="bg-white p-3 rounded-lg shadow-sm">
-                    <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-[#1e3a8a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
                   <div>
                     <h4 className="font-bold text-indigo-900 text-sm mb-1">{doc.identity_type_name}</h4>
-                    <p className="text-sm text-indigo-600 font-medium mb-2">{doc.identity_file_number}</p>
+                    <p className="text-sm text-[#1e3a8a] font-medium mb-2">{doc.identity_file_number}</p>
                     <span className="text-xs px-2 py-1 bg-white text-indigo-500 rounded-md border border-indigo-100 shadow-sm">
                       {doc.file_path ? doc.file_path.split("/").pop() : doc.file?.name}
                     </span>
@@ -531,7 +526,7 @@ export default function OnboardingPreviewPage() {
                   {edu.documents && edu.documents.length > 0 && (
                     <div className="mt-4 pt-4 border-t border-indigo-50 flex gap-3 flex-wrap">
                       {edu.documents.map((d, i) => (
-                        <span key={i} className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full font-medium">
+                        <span key={i} className="text-xs bg-indigo-50 text-[#1e3a8a] px-3 py-1.5 rounded-full font-medium">
                           📄 {d.document_name}
                         </span>
                       ))}
@@ -566,7 +561,7 @@ export default function OnboardingPreviewPage() {
                     {exp.documents && exp.documents.length > 0 && (
                       <div className="mt-4 pt-4 border-t border-indigo-50 flex gap-3 flex-wrap">
                         {exp.documents.map((d, i) => (
-                          <span key={i} className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full font-medium">
+                          <span key={i} className="text-xs bg-indigo-50 text-[#1e3a8a] px-3 py-1.5 rounded-full font-medium">
                             📄 {DOCUMENT_LABELS[d.doc_type || ""] || d.doc_type}
                           </span>
                         ))}
@@ -647,7 +642,7 @@ export default function OnboardingPreviewPage() {
                     checked={confirmed}
                     onChange={(e) => setConfirmed(e.target.checked)}
                   />
-                  <div className="w-8 h-8 md:w-6 md:h-6 border-2 border-indigo-300 rounded peer-checked:bg-indigo-600 peer-checked:border-indigo-600 transition-all flex items-center justify-center">
+                  <div className="w-8 h-8 md:w-6 md:h-6 border-2 border-indigo-300 rounded peer-checked:bg-[#1e3a8a] peer-checked:border-[#1e3a8a] transition-all flex items-center justify-center">
                     <svg className={`w-4 h-4 text-white ${confirmed ? "scale-100" : "scale-0"} transition-transform`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                     </svg>
@@ -655,7 +650,7 @@ export default function OnboardingPreviewPage() {
                 </div>
                 <div className="flex-1">
                   <p className="text-indigo-900 font-bold">Declare Information Accuracy</p>
-                  <p className="text-sm text-indigo-600">I confirm that all details provided are true to the best of my knowledge.</p>
+                  <p className="text-sm text-[#1e3a8a]">I confirm that all details provided are true to the best of my knowledge.</p>
                 </div>
               </label>
             </div>
@@ -692,13 +687,13 @@ function Section({ title, children, onEdit }: { title: string; children: React.R
   return (
     <div className="relative group">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-indigo-900 flex items-center gap-3">
-          <span className="w-1.5 h-8 bg-indigo-600 rounded-full group-hover:bg-indigo-400 transition-colors"></span>
+        <h2 className="text-xl font-bold text-[#1e3a8a] flex items-center gap-3">
+          <span className="w-1.5 h-8 bg-[#1e3a8a] rounded-full group-hover:bg-blue-400 transition-colors"></span>
           {title}
         </h2>
         <button
           onClick={onEdit}
-          className="px-4 py-1.5 text-sm font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-all"
+          className="px-4 py-1.5 text-sm font-bold text-[#1e3a8a] bg-blue-50 hover:bg-blue-100 rounded-lg transition-all"
         >
           Modify
         </button>
@@ -712,16 +707,16 @@ function PreviewRow({ label, value }: { label: string; value?: string | number |
   const display = value && String(value).trim() !== "" && value !== "undefined undefined" ? String(value) : "-";
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">{label}</span>
-      <span className="text-indigo-900 font-medium text-lg leading-tight">{display}</span>
+      <span className="text-xs font-bold text-[#1e3a8a] uppercase tracking-widest">{label}</span>
+      <span className="text-gray-900 font-medium text-lg leading-tight">{display}</span>
     </div>
   );
 }
 
 function AddressBlock({ title, address }: { title: string; address?: Address }) {
   return (
-    <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100">
-      <h4 className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-3">{title}</h4>
+    <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+      <h4 className="text-xs font-bold text-[#1e3a8a] uppercase tracking-widest mb-3">{title}</h4>
       <div className="text-indigo-900 font-medium leading-relaxed">
         <p className="text-lg">{address?.address_line1}</p>
         <p>{address?.address_line2}</p>

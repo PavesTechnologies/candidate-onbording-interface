@@ -163,7 +163,7 @@ export default function EducationDetailsPage() {
 
   if (!countryUuidLoaded || !mappingLoaded) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="p-8 bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-indigo-100">
           <p className="text-indigo-900 font-medium">Loading education details...</p>
         </div>
@@ -330,36 +330,34 @@ export default function EducationDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-white py-12">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-200/20 rounded-full blur-3xl opacity-50"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-200/20 rounded-full blur-3xl opacity-50"></div>
-      </div>
-
-      <div className="relative mx-auto max-w-6xl rounded-[2.5rem] bg-white/80 backdrop-blur-2xl p-10 md:p-16 shadow-2xl border border-white/50">
-        <div className="mb-10">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Onboarding Step 4</span>
-            <div className="h-px w-8 bg-indigo-100"></div>
+    <div className="py-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+        <div className="flex items-center justify-between mb-8 border-b pb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-[#1e3a8a]">
+              {activeLevel ? (
+                <span className="flex items-center gap-3">
+                  Education
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                  <span className="text-[#1e3a8a]">{activeLevel}</span>
+                </span>
+              ) : (
+                "Education Details"
+              )}
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              {activeLevel 
+                ? `Please provide details for your ${activeLevel.toLowerCase()} education.`
+                : "Tell us about your academic background and upload your relevant certificates."}
+            </p>
           </div>
-          <h2 className="text-4xl font-black text-indigo-950 tracking-tight">
-            {activeLevel ? (
-              <span className="flex items-center gap-3">
-                Education
-                <svg className="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                </svg>
-                <span className="text-indigo-600">{activeLevel}</span>
-              </span>
-            ) : (
-              "Education Details"
-            )}
-          </h2>
-          <p className="mt-4 text-indigo-600/70 font-medium">
-            {activeLevel 
-              ? `Please provide the specific details and documents for your ${activeLevel.toLowerCase()} education.`
-              : "Tell us about your academic background and upload your relevant certificates."}
-          </p>
+          <div className="hidden sm:block">
+            <span className="bg-blue-50 text-[#1e3a8a] text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
+              Step 4 of 6
+            </span>
+          </div>
         </div>
 
         {error && <ErrorAlert message={error} onClose={() => setError("")} />}

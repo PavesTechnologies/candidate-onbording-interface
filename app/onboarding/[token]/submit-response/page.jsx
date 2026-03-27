@@ -81,7 +81,7 @@ export default function PreviewPage() {
       <div className="text-center">
         <button
           onClick={handleSubmit}
-          className="bg-indigo-600 text-white px-6 py-2 rounded-lg"
+          className="bg-[#1e3a8a] hover:bg-blue-800 transition-colors"
         >
           Submit Onboarding
         </button>
