@@ -9,6 +9,8 @@ import { Button } from "@/app/components/onboarding/ButtonComponents";
 import { ErrorAlert } from "@/app/components/onboarding/AlertsComponents";
 import { useFormValidation } from "@/app/hooks/useFormValidation";
 import { useLocalStorageForm } from "../hooks/localStorage";
+import { API_CONFIG } from "@/app/utils/apiConfig";
+
 
 /* ===================== TYPES ===================== */
 
@@ -162,7 +164,7 @@ export default function BankPfDetailsPage() {
     setGlobalLoading(true);
 
     try {
-      const tokenRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/token-verification/${token}`);
+      const tokenRes = await fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/token-verification/${token}`);
 
       if (!tokenRes.ok) {
         toast.error("Session expired");
@@ -190,8 +192,8 @@ export default function BankPfDetailsPage() {
       };
 
       const bankEndpoint = meta.bank_uuid
-        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/bank/${meta.bank_uuid}`
-        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/bank`;
+        ? `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/bank/${meta.bank_uuid}`
+        : `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/bank`;
 
       const bankMethod = meta.bank_uuid ? "PUT" : "POST";
 
@@ -224,8 +226,8 @@ export default function BankPfDetailsPage() {
       };
 
       const pfEndpoint = meta.pf_uuid
-        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/pf/${meta.pf_uuid}`
-        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/pf`;
+        ? `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/pf/${meta.pf_uuid}`
+        : `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/pf`;
 
       const pfMethod = meta.pf_uuid ? "PUT" : "POST";
 

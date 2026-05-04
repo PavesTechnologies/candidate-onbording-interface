@@ -9,6 +9,8 @@ import { FormField, TextInput, SelectInput } from "@/app/components/onboarding/F
 import { Button } from "@/app/components/onboarding/ButtonComponents";
 import { ErrorAlert } from "@/app/components/onboarding/AlertsComponents";
 import { validations, errorMessages } from "@/app/utils/validations";
+import { API_CONFIG } from "@/app/utils/apiConfig";
+
 
 /* ===================== TYPES ===================== */
 
@@ -164,7 +166,7 @@ export default function AddressDetailsPage() {
   /* ---------------- FETCH COUNTRIES ---------------- */
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/masters/country`)
+    fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/masters/country`)
       .then((res) => res.json())
       .then((data: Country[]) => setCountries(data.filter((c) => c.is_active)))
       .catch(() => setError("Failed to load countries"));
@@ -174,7 +176,7 @@ export default function AddressDetailsPage() {
     if (!token || hasLoadedRef.current) return;
     hasLoadedRef.current = true;
 
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/token-verification/${token}`)
+    fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/token-verification/${token}`)
       .then((res) => res.json())
       .then((uuid: string) => setUserUuid(uuid))
       .catch(() => {});
@@ -321,7 +323,7 @@ export default function AddressDetailsPage() {
 
         if (address_uuid) {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/employee-details/address/${address_uuid}`,
+            `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/employee-details/address/${address_uuid}`,
             {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -332,7 +334,7 @@ export default function AddressDetailsPage() {
           toast.success(`${currentAddr.address_type} address updated`);
         } else {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/employee-upload/address`,
+            `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/employee-upload/address`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },

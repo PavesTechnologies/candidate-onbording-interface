@@ -9,6 +9,8 @@ import { FormField, TextInput, SelectInput } from "@/app/components/onboarding/F
 import { Button } from "@/app/components/onboarding/ButtonComponents";
 import { ErrorAlert } from "@/app/components/onboarding/AlertsComponents";
 import { validations, errorMessages } from "@/app/utils/validations";
+import { API_CONFIG } from "@/app/utils/apiConfig";
+
 
 /* ===================== TYPES ===================== */
 
@@ -75,7 +77,7 @@ export default function IdentityDocumentsPage() {
   /* ===================== FETCH COUNTRIES ===================== */
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/masters/country`)
+    fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/masters/country`)
       .then((res) => res.json())
       .then((data: Country[]) =>
         setCountries((Array.isArray(data) ? data : []).filter((c) => c.is_active))
@@ -89,7 +91,7 @@ export default function IdentityDocumentsPage() {
     if (!selectedCountry) return;
 
     fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/identity/country-mapping/identities/${selectedCountry}`
+      `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/identity/country-mapping/identities/${selectedCountry}`
     )
       .then((res) => res.json())
       .then((data) => setIdentityTypes(Array.isArray(data) ? data : []))
@@ -148,7 +150,7 @@ export default function IdentityDocumentsPage() {
     (async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/token-verification/${token}`
+          `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/token-verification/${token}`
         );
         if (!res.ok) return;
         setUserUuid(await res.json());
@@ -296,8 +298,8 @@ export default function IdentityDocumentsPage() {
         if (isBrowserFile(doc.file)) form.append("file", doc.file);
 
         const endpoint = doc.identity_uuid
-          ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/employee-upload/identity-documents/${doc.identity_uuid}`
-          : `${process.env.NEXT_PUBLIC_API_BASE_URL}/employee-upload/identity-documents`;
+          ? `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/employee-upload/identity-documents/${doc.identity_uuid}`
+          : `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/employee-upload/identity-documents`;
 
         const res = await fetch(endpoint, {
           method: doc.identity_uuid ? "PUT" : "POST",

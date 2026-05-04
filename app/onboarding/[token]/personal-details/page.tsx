@@ -9,6 +9,8 @@ import { FormField, TextInput, SelectInput } from "@/app/components/onboarding/F
 import { Button } from "@/app/components/onboarding/ButtonComponents";
 import { ErrorAlert } from "@/app/components/onboarding/AlertsComponents";
 import { validations, errorMessages } from "@/app/utils/validations";
+import { API_CONFIG } from "@/app/utils/apiConfig";
+
 
 /* ===================== TYPES ===================== */
 
@@ -34,7 +36,6 @@ interface PersonalForm {
   last_name?: string;
   email?: string;
   contact_number?: string;
-
   date_of_birth: string;
   gender: string;
   marital_status: string;
@@ -44,7 +45,6 @@ interface PersonalForm {
   emergency_contact_name: string;
   emergency_contact_phone: string;
   emergency_contact_relation_uuid: string;
- 
 }
 
 interface Relation {
@@ -96,7 +96,7 @@ emergency_contact_relation_uuid: "",
   /* ---------------- FETCH COUNTRIES ---------------- */
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/masters/country`)
+    fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/masters/country`)
       .then((res) => res.json())
       .then((data: Country[]) => setCountries(data.filter((c) => c.is_active)))
       .catch(() => setError("Failed to load countries"));
@@ -105,7 +105,7 @@ emergency_contact_relation_uuid: "",
   /* ---------------- FETCH RELATIONS ---------------- */
 
 useEffect(() => {
-  fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/employee-upload/relations`)
+  fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/employee-upload/relations`)
     .then((res) => res.json())
     .then((data: Relation[]) => setRelations(data))
     .catch(() => setError("Failed to load relations"));
@@ -120,14 +120,14 @@ useEffect(() => {
     const loadData = async () => {
       try {
         const tokenRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/token-verification/${token}`
+          `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/token-verification/${token}`
         );
         if (!tokenRes.ok) return;
 
         const user_uuid: string = await tokenRes.json();
 
         const offerRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/offerletters/offer/${user_uuid}`
+          `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/offerletters/offer/${user_uuid}`
         );
         if (!offerRes.ok) return;
 
@@ -311,7 +311,7 @@ console.log("personalUuid:", personalUuid);
       // 🔵 FIRST TIME → POST
       if (!personalUuid) {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/employee-upload/personal-details`,
+          `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/employee-upload/personal-details`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -337,8 +337,8 @@ console.log("Saved personalUuid:", uuid);
           nationality_country_uuid: payload.nationality_country_uuid,
           residence_country_uuid: payload.residence_country_uuid,
           emergency_contact_name: payload.emergency_contact_name,
-emergency_contact_phone: payload.emergency_contact_phone,
-emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
+          emergency_contact_phone: payload.emergency_contact_phone,
+          emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
         });
         localStorage.setItem(
           `personal-snapshot-${token}`,
@@ -350,8 +350,8 @@ emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
             nationality_country_uuid: payload.nationality_country_uuid,
             residence_country_uuid: payload.residence_country_uuid,
             emergency_contact_name: payload.emergency_contact_name,
-emergency_contact_phone: payload.emergency_contact_phone,
-emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
+            emergency_contact_phone: payload.emergency_contact_phone,
+            emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
           })
         );
 
@@ -363,7 +363,7 @@ emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
       // 🔵 AFTER FIRST TIME → PUT
       else {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/employee-details/${personalUuid}`,
+          `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/employee-details/${personalUuid}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -382,7 +382,7 @@ emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
           residence_country_uuid: payload.residence_country_uuid,
           emergency_contact_name: payload.emergency_contact_name,
           emergency_contact_phone: payload.emergency_contact_phone,
-emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
+          emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
         });
         localStorage.setItem(
           `personal-snapshot-${token}`,
@@ -394,8 +394,8 @@ emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
             nationality_country_uuid: payload.nationality_country_uuid,
             residence_country_uuid: payload.residence_country_uuid,
             emergency_contact_name: payload.emergency_contact_name,
-emergency_contact_phone: payload.emergency_contact_phone,
-emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
+            emergency_contact_phone: payload.emergency_contact_phone,
+            emergency_contact_relation_uuid: payload.emergency_contact_relation_uuid,
           })
         );
 

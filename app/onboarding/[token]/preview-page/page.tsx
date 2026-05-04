@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import { useLocalStorageForm } from "../hooks/localStorage";
 import { useGlobalLoading } from "../../../components/onboarding/LoadingContext";
 import { Button } from "@/app/components/onboarding/ButtonComponents";
+import { API_CONFIG } from "@/app/utils/apiConfig";
+
 
 /* ===================== TYPES ===================== */
 
@@ -142,7 +144,7 @@ export default function OnboardingPreviewPage() {
   }, []);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/masters/country`)
+    fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/masters/country`)
       .then((res) => res.json())
       .then((data: Country[]) =>
         setCountries((Array.isArray(data) ? data : []).filter((c) => c.is_active))
@@ -151,7 +153,7 @@ export default function OnboardingPreviewPage() {
   }, []);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/employee-upload/relations`)
+    fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/employee-upload/relations`)
       .then((res) => res.json())
       .then((data: Relation[]) => setRelations(data))
       .catch(() => {});
@@ -209,7 +211,7 @@ export default function OnboardingPreviewPage() {
       if (!hasMissing) return;
 
       try {
-        const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+        const base = API_CONFIG.EMPLOYEE_ONBOARDING_URL;
         const countryUuid = "019a8135-42fc-17ed-4825-f5a4634898fb";
 
         const [mappingRes, docsRes] = await Promise.all([
@@ -270,7 +272,7 @@ export default function OnboardingPreviewPage() {
       if (!user_uuid) return;
 
       try {
-        const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+        const base = API_CONFIG.EMPLOYEE_ONBOARDING_URL;
         const endpoints = [
           `${base}/experience/employee-experience?token=${token}`,
           `${base}/experience/employee/${user_uuid}`,
@@ -397,7 +399,7 @@ export default function OnboardingPreviewPage() {
       setGlobalLoading(true);
 
       const payload = { user_uuid };
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/hr/candidate/submit`, {
+      const res = await fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/hr/candidate/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

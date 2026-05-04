@@ -1,22 +1,22 @@
 import type { DegreeMaster, EducationLevel, MappingRow, UploadedDoc } from "./types";
+import { API_CONFIG } from "@/app/utils/apiConfig";
 
-export const fetchUserUuid = async (base: string, token: string) => {
-  const res = await fetch(`${base}/token-verification/${token}`);
+export const fetchUserUuid = async (token: string) => {
+  const res = await fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/token-verification/${token}`);
   return res.json() as Promise<string>;
 };
 
 export const fetchEducationMapping = async (
-  base: string,
   countryUuid: string,
 ) => {
-  const res = await fetch(`${base}/education/country-mapping/${countryUuid}`);
+  const res = await fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/education/country-mapping/${countryUuid}`);
   const data = await res.json();
   return Array.isArray(data) ? (data as MappingRow[]) : [];
 };
 
 export const fetchEducationLevel = async () => {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/masters/education-level`
+    `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/masters/education-level`
   );
 
   if (!res.ok) {
@@ -32,13 +32,13 @@ export const fetchEducationLevel = async () => {
 
 
 export const fetchDegreeMaster = async (education_uuid: string) => {
-  const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/education/degree-master/${education_uuid}`;
+  const url = `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/education/degree-master/${education_uuid}`;
   
-  console.log("Calling Degree API:", url); // 👈 add this
+  console.log("Calling Degree API:", url);
 
   const res = await fetch(url);
 
-  console.log("Status:", res.status); // 👈 add this
+  console.log("Status:", res.status);
 
   if (!res.ok) {
     if (res.status === 404) return [];
@@ -58,10 +58,9 @@ export const fetchDegreeMaster = async (education_uuid: string) => {
 
 
 export const createEducationDocument = async (
-  base: string,
   payload: FormData,
 ) => {
-  const res = await fetch(`${base}/education/employee-education-document`, {
+  const res = await fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/education/employee-education-document`, {
     method: "POST",
     body: payload,
   });
@@ -72,12 +71,11 @@ export const createEducationDocument = async (
 };
 
 export const updateEducationDocument = async (
-  base: string,
   document_uuid: string,
   payload: FormData,
 ) => {
   const res = await fetch(
-    `${base}/education/employee-education-document/${document_uuid}`,
+    `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/education/employee-education-document/${document_uuid}`,
     { method: "PUT", body: payload },
   );
 

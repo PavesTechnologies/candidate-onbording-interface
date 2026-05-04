@@ -2,6 +2,7 @@
 
 import { ReactNode, useEffect, useState } from "react";
 import OnboardingHeader from "../../components/onboarding/OnboardingHeader";
+import { API_CONFIG } from "../../utils/apiConfig";
 
 
 // type OnboardingLayoutProps = {
@@ -36,7 +37,7 @@ console.log("OnboardingLayout token:", token);
     const verifyToken = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/token-verification/verify_token`,
+          `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/token-verification/verify_token`,
           {
             method: "POST",
             headers: {

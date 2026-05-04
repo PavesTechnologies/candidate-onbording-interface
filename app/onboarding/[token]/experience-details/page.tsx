@@ -9,6 +9,8 @@ import { FormField, TextInput, SelectInput } from "@/app/components/onboarding/F
 import { Button } from "@/app/components/onboarding/ButtonComponents";
 import { ErrorAlert } from "@/app/components/onboarding/AlertsComponents";
 import { validations, errorMessages } from "@/app/utils/validations";
+import { API_CONFIG } from "@/app/utils/apiConfig";
+
 
 /* ===================== TYPES ===================== */
 
@@ -205,7 +207,7 @@ export default function ExperienceDetailsPage() {
     setGlobalLoading(true);
 
     try {
-      const tokenRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/token-verification/${token}`);
+      const tokenRes = await fetch(`${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/token-verification/${token}`);
       if (!tokenRes.ok) throw new Error("Failed to verify token");
       const employee_uuid: string = await tokenRes.json();
 
@@ -240,8 +242,8 @@ export default function ExperienceDetailsPage() {
         });
 
         const endpoint = exp.experience_uuid 
-          ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/experience/${exp.experience_uuid}`
-          : `${process.env.NEXT_PUBLIC_API_BASE_URL}/experience/`;
+          ? `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/experience/${exp.experience_uuid}`
+          : `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/experience/`;
         
         const res = await fetch(endpoint, {
           method: exp.experience_uuid ? "PUT" : "POST",

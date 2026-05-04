@@ -17,18 +17,21 @@ import {
 import type { CommonForm, Education, UploadedDoc } from "./types";
 import { useEducationData } from "./useEducationData";
 import {
+  fetchDegreeMaster,
+  fetchEducationMapping,
+  fetchEducationLevel,
+  fetchUserUuid,
   createEducationDocument,
   updateEducationDocument,
 } from "./educationApi";
 import { Button } from "@/app/components/onboarding/ButtonComponents";
 import { ErrorAlert } from "@/app/components/onboarding/AlertsComponents";
+import { API_CONFIG } from "@/app/utils/apiConfig";
 
 export default function EducationDetailsPage() {
   const { token } = useParams<{ token: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -60,7 +63,6 @@ export default function EducationDetailsPage() {
   }, [token]);
 
   const { rows, uploadedMap: backendUploadedMap, setUploadedMap: setBackendUploadedMap, userUuid, degrees } = useEducationData({
-    base,
     token,
     countryUuid: countryUuid || "",
     onError: setError,
@@ -283,12 +285,12 @@ export default function EducationDetailsPage() {
 
         if (!existing) {
           hasAnyChange = true;
-          const saved: UploadedDoc = await createEducationDocument(base, payload);
+          const saved: UploadedDoc = await createEducationDocument(payload);
           nextUploadedMap = { ...nextUploadedMap, [row.mapping_uuid]: saved };
           toast.success("Education documents saved successfully");
         } else if (hasEducationChanged(existing, form, file)) {
           hasAnyChange = true;
-          const updated: UploadedDoc = await updateEducationDocument(base, existing.document_uuid, payload);
+          const updated: UploadedDoc = await updateEducationDocument(existing.document_uuid, payload);
           nextUploadedMap = { ...nextUploadedMap, [row.mapping_uuid]: updated };
           toast.success("Education documents updated successfully");
         }

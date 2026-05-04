@@ -10,14 +10,12 @@ import {
 } from "./educationApi";
 
 type UseEducationDataArgs = {
-  base: string;
   token?: string;
   countryUuid: string;
   onError: (message: string) => void;
 };
 
 export const useEducationData = ({
-  base,
   token,
   countryUuid,
   onError,
@@ -32,16 +30,16 @@ export const useEducationData = ({
   useEffect(() => {
     if (!token) return;
 
-    fetchUserUuid(base, token)
+    fetchUserUuid(token)
       .then((uuid) => setUserUuid(uuid))
       .catch(() => onError("Invalid onboarding link"));
-  }, [base, token, onError]);
+  }, [token, onError]);
 
   useEffect(() => {
     if (!countryUuid) return; // Skip if countryUuid is not loaded
 
     Promise.all([
-      fetchEducationMapping(base, countryUuid),
+      fetchEducationMapping(countryUuid),
       fetchEducationLevel()
     ])
       .then(async ([mappingData, educationLevelData]) => {
@@ -93,7 +91,7 @@ export const useEducationData = ({
         console.error(error);
         onError("Failed to load education data");
       });
-  }, [base, countryUuid, onError]);
+  }, [countryUuid, onError]);
 
   return {
     rows,

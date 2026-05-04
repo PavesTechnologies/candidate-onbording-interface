@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { toast } from "react-toastify";
 
+import { API_CONFIG } from "@/app/utils/apiConfig";
+
 export default function Page() {
   /* ---------------- ROUTER ---------------- */
   const router = useRouter();
@@ -19,6 +21,16 @@ export default function Page() {
   const [timer, setTimer] = useState<number>(30);
 
   const otpRefs = useRef<Array<HTMLInputElement | null>>([]);
+
+  /* ---------------- WELCOME CHECK ---------------- */
+  useEffect(() => {
+    if (typeof window !== "undefined" && token) {
+      const welcomeSeen = localStorage.getItem(`onboarding-welcome-seen-${token}`);
+      if (welcomeSeen !== "true") {
+        router.replace(`/onboarding/${token}/welcome`);
+      }
+    }
+  }, [token, router]);
 
   /* ---------------- OTP TIMER ---------------- */
   useEffect(() => {
@@ -44,7 +56,7 @@ export default function Page() {
       setLoading(true);
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/otp/send`,
+        `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/otp/send`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -99,7 +111,7 @@ export default function Page() {
       setLoading(true);
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/otp/verifyOtp`,
+        `${API_CONFIG.EMPLOYEE_ONBOARDING_URL}/otp/verifyOtp`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
