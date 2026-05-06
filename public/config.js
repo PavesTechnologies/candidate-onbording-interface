@@ -1,4 +1,0 @@
-window.__APP_CONFIG__ =  {
-    EMPLOYEE_ONBOARDING_URL: "http://13.204.95.26:8001",
-    USER_MANAGEMENT_URL: "http://13.204.95.26:8000",
-};
