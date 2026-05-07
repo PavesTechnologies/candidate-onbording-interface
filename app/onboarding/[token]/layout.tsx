@@ -10,10 +10,14 @@ export default function OnboardingLayout({
   const pathname = usePathname();
   const isWelcomePage = pathname.endsWith("/welcome");
 
+  if (isWelcomePage) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="min-h-screen flex bg-gray-50 flex-row overflow-hidden">
       {/* Sidebar Stepper */}
-      {!isWelcomePage && <OnboardingSidebar />}
+      <OnboardingSidebar />
 
       {/* Dynamic Page Content */}
       <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-gray-50">

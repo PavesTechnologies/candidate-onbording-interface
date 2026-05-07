@@ -5,12 +5,6 @@ import OnboardingHeader from "../../components/onboarding/OnboardingHeader";
 import { API_CONFIG } from "../../utils/apiConfig";
 
 
-// type OnboardingLayoutProps = {
-//   children: ReactNode;
-//   params: {
-//     token: string;
-//   };
-// };
 
 export default function OnboardingLayout({
   children,

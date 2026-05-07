@@ -1,190 +1,324 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { Button } from "@/app/components/onboarding/ButtonComponents";
+import Image from "next/image";
+import { useRef, useEffect } from "react";
 
-/* ===================== ICONS ===================== */
+const STEPS = [
+  { label: "Personal",   d: "M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 14a6 6 0 0 1 12 0" },
+  { label: "Address",    d: "M8 2a5 5 0 0 1 5 5c0 3.5-5 9-5 9S3 10.5 3 7a5 5 0 0 1 5-5zm0 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" },
+  { label: "Identity",   d: "M2 5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zM5 8h2M9 8h2" },
+  { label: "Education",  d: "M8 2L2 5.5l6 3.5 6-3.5L8 2zM2 9l6 3.5L14 9M2 12l6 3.5L14 12" },
+  { label: "Experience", d: "M3 5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5zM9 5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V5zM3 11h10" },
+  { label: "Bank & PF",  d: "M2 6h12M2 10h12M4 3h8a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" },
+];
 
-const IconUser = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-  </svg>
-);
+const CSS = `
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
 
-const IconMapPin = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-  </svg>
-);
+  .wp {
+    --n950: #0C0A09; --n800: #292524; --n600: #57534E;
+    --n500: #78716C; --n400: #A8A29E; --n300: #C4C0BC;
+    --n200: #E7E5E4; --n150: #F0EFED; --n100: #F5F4F3;
+    --a700: #1D40AF;  --a600: #1B4ED8;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    position: fixed; inset: 0;
+    display: flex; overflow: hidden;
+    background: var(--n100);
+  }
 
-const IconFileCheck = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-);
+  /* ── Left panel ── */
+  .wp-l {
+    position: relative;
+    width: 55%; height: 100%;
+    background: var(--n100);
+    border-right: 1px solid var(--n200);
+    display: flex; flex-direction: column;
+    padding: 44px 48px;
+    overflow: hidden;
+    animation: slideL 420ms cubic-bezier(0,0,0.2,1) both;
+  }
 
-const IconGraduationCap = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path d="M12 14l9-5-9-5-9 5 9 5z" />
-    <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-  </svg>
-);
+  /* ── Dot canvas ── */
+  .wp-dots {
+    position: absolute; inset: 0;
+    pointer-events: none; z-index: 0;
+    width: 100%; height: 100%;
+  }
 
-const IconBriefcase = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-  </svg>
-);
+  /* ── Left content (above canvas) ── */
+  .wp-lc {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    height: 100%;
+  }
 
-const IconCreditCard = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z" />
-  </svg>
-);
+  /* ── Giant text ── */
+  .wp-hero {
+    font-size: clamp(60px, 8vw, 88px);
+    font-weight: 700;
+    line-height: 0.9;
+    color: #d8d3c8;
+    letter-spacing: -0.05em;
+    margin-bottom: 28px;
+    user-select: none; pointer-events: none;
+    flex-shrink: 0;
+  }
 
-const IconClock = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-);
+  /* ── Step chips ── */
+  .wp-chips {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-top: auto; padding-top: 24px;
+  }
+  .wp-chip {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px;
+    opacity: 0;
+    animation: chipIn 350ms cubic-bezier(0,0,0.2,1) both;
+  }
+  .wp-chip-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: #fff; border: 1px solid var(--n200);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 3px rgba(12,10,9,.07);
+  }
+  .wp-chip-lbl {
+    font-size: 9px; font-weight: 500;
+    color: var(--n500); letter-spacing: .06em;
+    text-transform: uppercase; white-space: nowrap;
+  }
 
-const IconShieldCheck = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-  </svg>
-);
+  /* ── Right panel ── */
+  .wp-r {
+    flex: 1; height: 100%; background: #fff;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 48px;
+    animation: slideR 420ms cubic-bezier(0,0,0.2,1) 80ms both;
+  }
+  .wp-card { width: 100%; max-width: 360px; }
 
-const IconSave = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-  </svg>
-);
+  /* ── Button ── */
+  .wp-btn {
+    width: 100%; height: 48px;
+    background: var(--a600); color: #fff;
+    border: none; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600;
+    font-family: inherit; letter-spacing: .01em; cursor: pointer;
+    transition: transform 140ms cubic-bezier(.34,1.56,.64,1),
+                box-shadow 140ms ease, background 120ms ease;
+  }
+  .wp-btn:hover   { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(27,78,216,.3); background: var(--a700); }
+  .wp-btn:active  { transform: translateY(0); box-shadow: none; }
+  .wp-btn:focus-visible { outline: 2px solid var(--a600); outline-offset: 2px; }
 
-const IconChevronRight = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-  </svg>
-);
+  /* ── Divider ── */
+  .wp-div {
+    display: flex; align-items: center; gap: 12px;
+    margin: 0 0 28px 0;
+  }
+  .wp-div-line { flex: 1; height: 1px; background: var(--n150); }
+  .wp-div-txt  { font-size: 11px; font-weight: 500; color: var(--n300); letter-spacing: .1em; text-transform: uppercase; }
 
-const IconHeadphones = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 10V7a6 6 0 10-12 0v3m12 0a3 3 0 01-3 3H9a3 3 0 01-3-3m12 0v5a3 3 0 01-3 3H9a3 3 0 01-3-3v-5" />
-  </svg>
-);
+  /* ── Animations ── */
+  @keyframes slideL { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes slideR { from{opacity:0;transform:translateX(20px)}  to{opacity:1;transform:translateX(0)} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(10px)}  to{opacity:1;transform:translateY(0)} }
+  @keyframes chipIn { from{opacity:0;transform:translateY(6px)}   to{opacity:.75;transform:translateY(0)} }
 
+  .wp-a1 { animation: fadeUp 300ms cubic-bezier(0,0,0.2,1) 160ms both; }
+  .wp-a2 { animation: fadeUp 300ms cubic-bezier(0,0,0.2,1) 250ms both; }
+  .wp-a3 { animation: fadeUp 300ms cubic-bezier(0,0,0.2,1) 340ms both; }
+`;
+
+/* ── Dot canvas with hover spotlight ── */
+function DotCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const parent = canvas.parentElement!;
+
+    const mouse = { x: -9999, y: -9999 };
+    let rafId = 0;
+
+    const resize = () => {
+      canvas.width  = parent.clientWidth;
+      canvas.height = parent.clientHeight;
+    };
+    resize();
+
+    const draw = () => {
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      const W = canvas.width, H = canvas.height;
+      const GAP = 24, BASE_R = 1.1, HOVER_R = 3.5, RADIUS = 140;
+
+      ctx.clearRect(0, 0, W, H);
+
+      for (let cx = GAP; cx < W; cx += GAP) {
+        for (let cy = GAP; cy < H; cy += GAP) {
+          const dx = cx - mouse.x, dy = cy - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          /* gradient mask: dots fade in toward the right edge */
+          const edge = Math.min(1, (cx / W) * 1.8);
+          let r: number, a: number;
+          if (dist < RADIUS) {
+            const t = 1 - dist / RADIUS;
+            r = BASE_R + (HOVER_R - BASE_R) * t;
+            a = (0.1 + 0.6 * t) * edge;
+          } else {
+            r = BASE_R;
+            a = 0.1 * edge;
+          }
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(100,92,84,${a.toFixed(3)})`;
+          ctx.fill();
+        }
+      }
+      rafId = requestAnimationFrame(draw);
+    };
+
+    const onMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    };
+    const onLeave = () => { mouse.x = -9999; mouse.y = -9999; };
+
+    parent.addEventListener("mousemove", onMove);
+    parent.addEventListener("mouseleave", onLeave);
+    const ro = new ResizeObserver(resize);
+    ro.observe(parent);
+    rafId = requestAnimationFrame(draw);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      parent.removeEventListener("mousemove", onMove);
+      parent.removeEventListener("mouseleave", onLeave);
+      ro.disconnect();
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="wp-dots" />;
+}
+
+/* ── Page ── */
 export default function WelcomePage() {
   const router = useRouter();
   const { token } = useParams<{ token: string }>();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    // Check if welcome already seen
-    const welcomeSeen = localStorage.getItem(`onboarding-welcome-seen-${token}`);
-    if (welcomeSeen === "true") {
-      router.replace(`/onboarding/${token}`);
-    }
-  }, [token, router]);
-
-  if (!mounted) return null;
 
   const handleStart = () => {
     localStorage.setItem(`onboarding-welcome-seen-${token}`, "true");
     router.push(`/onboarding/${token}`);
   };
 
-  const steps = [
-    { icon: <IconUser />, label: "Personal Details" },
-    { icon: <IconMapPin />, label: "Residential Address" },
-    { icon: <IconFileCheck />, label: "Identity Verification" },
-    { icon: <IconGraduationCap />, label: "Educational Background" },
-    { icon: <IconBriefcase />, label: "Work Experience" },
-    { icon: <IconCreditCard />, label: "Bank & PF Details" },
-  ];
-
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center py-12 px-4 animate-in fade-in duration-700">
-      <div className="max-w-4xl w-full bg-white rounded-3xl shadow-xl shadow-blue-900/5 border border-blue-50 overflow-hidden">
-        <div className="flex flex-col md:flex-row">
-          {/* Left Column: Hero & Steps */}
-          <div className="flex-1 p-8 md:p-12 bg-gradient-to-br from-white to-blue-50/30">
-            <div className="mb-8">
-              <h1 className="text-4xl font-extrabold text-[#1e3a8a] mb-4 tracking-tight leading-tight">
-                Welcome to the Team!
-              </h1>
-              <p className="text-lg text-blue-900/70 font-medium leading-relaxed">
-                We're excited to have you on board. Let's get your onboarding started with a few quick steps to set up your profile and documents.
-              </p>
-            </div>
+    <div className="wp">
+      <style>{CSS}</style>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-              {steps.map((step, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 bg-white rounded-xl border border-blue-100 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
-                  <div className="bg-blue-50 text-[#1e3a8a] p-2 rounded-lg">
-                    {step.icon}
-                  </div>
-                  <span className="text-sm font-semibold text-blue-900">{step.label}</span>
-                </div>
-              ))}
-            </div>
+      {/* ── Left Panel ── */}
+      <div className="wp-l">
+        <DotCanvas />
+        <div className="wp-lc">
 
-            <Button
-              variant="primary"
-              onClick={handleStart}
-              className="w-full sm:w-auto px-10 py-4 text-lg font-bold group shadow-lg shadow-blue-500/20"
-            >
-              <span className="flex items-center gap-2">
-                Start Onboarding
-                <IconChevronRight />
-              </span>
-            </Button>
+          {/* Logo + brand */}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "32px", flexShrink: 0 }}>
+            <Image
+              src="/logo.png" alt="Paves Logo"
+              width={44} height={44}
+              style={{ objectFit: "contain", borderRadius: "9px", flexShrink: 0 }}
+            />
+            <span style={{ fontSize: "19px", fontWeight: 600, color: "var(--n800)", letterSpacing: "-0.01em" }}>
+              Paves Intranet Portal
+            </span>
           </div>
 
-          {/* Right Column: Key Info Cards */}
-          <div className="w-full md:w-80 bg-[#1e3a8a] p-8 md:p-10 text-white flex flex-col justify-between">
-            <div className="space-y-8">
-              <div className="space-y-2">
-                <div className="flex items-center gap-3 mb-1">
-                  <IconClock />
-                  <h3 className="font-bold text-blue-100 uppercase tracking-widest text-xs">Estimated Time</h3>
-                </div>
-                <p className="text-xl font-bold">10 – 15 Minutes</p>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center gap-3 mb-1">
-                  <IconSave />
-                  <h3 className="font-bold text-blue-100 uppercase tracking-widest text-xs">Progress Saved</h3>
-                </div>
-                <p className="text-sm text-blue-100/80 leading-relaxed">
-                  Your information is saved automatically as you complete each section. You can return at any time.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center gap-3 mb-1">
-                  <IconShieldCheck />
-                  <h3 className="font-bold text-blue-100 uppercase tracking-widest text-xs">Data Privacy</h3>
-                </div>
-                <p className="text-sm text-blue-100/80 leading-relaxed">
-                  Your data is encrypted and securely stored. Information is used strictly for official onboarding purposes.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-12 pt-8 border-t border-blue-800">
-              <div className="flex items-center gap-3 mb-2">
-                <IconHeadphones />
-                <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Need Help?</span>
-              </div>
-              <p className="text-xs text-blue-200/60 leading-relaxed">
-                If you encounter any issues, please contact your HR representative or reach out to our support team.
-              </p>
-            </div>
+          {/* Giant decorative word */}
+          <div className="wp-hero">
+            On<br />boarding
           </div>
+
+          {/* Headline */}
+          <h1 style={{
+            fontSize: "22px", fontWeight: 700,
+            color: "var(--n950)", letterSpacing: "-0.02em",
+            lineHeight: 1.3, margin: "0 0 12px 0", flexShrink: 0,
+          }}>
+            Your onboarding<br />journey starts here
+          </h1>
+
+          {/* Description */}
+          <p style={{
+            fontSize: "14px", fontWeight: 400,
+            color: "var(--n500)", lineHeight: 1.7,
+            maxWidth: "400px", margin: 0, flexShrink: 0,
+          }}>
+            Complete your profile, upload required documents, and set up your
+            accounts — all in one streamlined flow.
+          </p>
+
+          {/* Step chips — pinned to bottom via margin-top: auto */}
+          <div className="wp-chips">
+            {STEPS.map(({ label, d }, i) => (
+              <div key={label} className="wp-chip" style={{ animationDelay: `${340 + i * 50}ms` }}>
+                <div className="wp-chip-icon">
+                  <svg width={15} height={15} viewBox="0 0 16 16"
+                    fill="none" stroke="#57534E" strokeWidth={1.4}
+                    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d={d} />
+                  </svg>
+                </div>
+                <span className="wp-chip-lbl">{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Right Panel ── */}
+      <div className="wp-r">
+        <div className="wp-card">
+
+          {/* Heading */}
+          <div className="wp-a1" style={{ marginBottom: "36px" }}>
+            <h2 style={{
+              fontSize: "28px", fontWeight: 700,
+              color: "var(--n950)", letterSpacing: "-0.022em",
+              lineHeight: 1.2, margin: "0 0 8px 0",
+            }}>
+              Welcome to the team!
+            </h2>
+            <p style={{ fontSize: "14px", fontWeight: 400, color: "var(--n500)", lineHeight: 1.5, margin: 0 }}>
+              We&apos;re excited to have you on board. Let&apos;s get your
+              profile and documents set up in a few quick steps.
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div className="wp-a2 wp-div">
+            <div className="wp-div-line" />
+            <span className="wp-div-txt">ready?</span>
+            <div className="wp-div-line" />
+          </div>
+
+          {/* CTA */}
+          <div className="wp-a3">
+            <button className="wp-btn" onClick={handleStart}>
+              Start Onboarding
+            </button>
+            <p style={{
+              marginTop: "14px", textAlign: "center",
+              fontSize: "11px", color: "var(--n300)", lineHeight: 1.6,
+            }}>
+              This link is unique to you and expires once your onboarding is complete.
+            </p>
+          </div>
+
         </div>
       </div>
     </div>
