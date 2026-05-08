@@ -181,7 +181,7 @@ export default function OnboardingPreviewPage() {
     []
   );
 
-  const [identityDraft, setIdentityDraft, clearIdentity] = useLocalStorageForm<IdentityDraft>(
+  const [identityDraft, , clearIdentity] = useLocalStorageForm<IdentityDraft>(
     `identity-details-${token}`,
     {
       country_uuid: "",
@@ -329,11 +329,9 @@ export default function OnboardingPreviewPage() {
     token,
     educationDetails,
     experienceDetails,
-    identityDraft,
     user_uuid,
     setEducationDetails,
     setExperienceDetails,
-    setIdentityDraft,
   ]);
 
   /* ===================== HELPERS ===================== */
@@ -373,19 +371,30 @@ export default function OnboardingPreviewPage() {
   );
 
   const isDataComplete = useMemo(() => {
+    const hasBankDetails = Boolean(
+      bankDetails?.bank?.account_holder_name?.trim() &&
+        bankDetails.bank.bank_name?.trim() &&
+        bankDetails.bank.account_number?.trim() &&
+        bankDetails.bank.ifsc_code?.trim() &&
+        bankDetails.bank.account_type?.trim()
+    );
+
     return Boolean(
       user_uuid &&
         personalDetails &&
-        addresses.length > 0 &&
+        hasAddressData(permanentAddress) &&
         educationList.length > 0 &&
-        identityList.length > 0
+        identityList.length > 0 &&
+        hasBankDetails
     );
-  }, [user_uuid, personalDetails, addresses, educationList, identityList]);
+  }, [user_uuid, personalDetails, permanentAddress, educationList, identityList, bankDetails]);
 
   const isSubmitDisabled = !confirmed || !isDataComplete || loading;
 
-  const handleSubmit = async () => {
-    if (!confirmed) {
+  const handleSubmit = async (confirmedOverride = confirmed) => {
+    if (loading) return;
+
+    if (!confirmedOverride) {
       toast.error("Please confirm the details before submitting");
       return;
     }
@@ -415,12 +424,19 @@ export default function OnboardingPreviewPage() {
       clearIdentity();
 
       toast.success("Onboarding submitted successfully ✅");
-      router.push(`/onboarding/${token}/success`);
+      router.replace(`/onboarding/${token}/success`);
     } catch {
       toast.error("Submission failed ❌ Your draft is safe.");
     } finally {
       setLoading(false);
       setGlobalLoading(false);
+    }
+  };
+
+  const handleDeclarationChange = (checked: boolean) => {
+    setConfirmed(checked);
+    if (checked) {
+      void handleSubmit(true);
     }
   };
 
@@ -611,17 +627,20 @@ export default function OnboardingPreviewPage() {
             }`}>
 
               {/* Declaration */}
-              <label className={`flex items-start gap-4 p-6 cursor-pointer transition-colors duration-150 ${
+              <label htmlFor="declaration-confirmed" className={`flex items-start gap-4 p-6 cursor-pointer transition-colors duration-150 ${
                 confirmed ? "bg-indigo-50/40" : "bg-white hover:bg-slate-50/60"
               }`}>
                 <div className="mt-0.5 shrink-0">
                   <input
+                    id="declaration-confirmed"
                     type="checkbox"
-                    className="sr-only"
+                    className="absolute h-5 w-5 cursor-pointer opacity-0"
                     checked={confirmed}
-                    onChange={(e) => setConfirmed(e.target.checked)}
+                    onChange={(e) => handleDeclarationChange(e.target.checked)}
+                    aria-describedby="declaration-copy"
+                    disabled={loading}
                   />
-                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-150 ${
+                  <div aria-hidden="true" className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-150 ${
                     confirmed ? "bg-indigo-600 border-indigo-600" : "border-slate-300 bg-white"
                   }`}>
                     {confirmed && (
@@ -634,7 +653,7 @@ export default function OnboardingPreviewPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-slate-900">Declaration of Accuracy</p>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  <p id="declaration-copy" className="text-xs text-slate-500 mt-1 leading-relaxed">
                     I hereby declare that all information provided above is accurate and complete to the best of my knowledge. I understand that any misrepresentation may result in action by my employer.
                   </p>
                 </div>
@@ -664,7 +683,7 @@ export default function OnboardingPreviewPage() {
                   </Button>
                   <Button
                     variant="primary"
-                    onClick={handleSubmit}
+                    onClick={() => handleSubmit()}
                     disabled={isSubmitDisabled}
                     loading={loading}
                   >

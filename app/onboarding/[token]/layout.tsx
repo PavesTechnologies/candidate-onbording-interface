@@ -11,10 +11,12 @@ export default function OnboardingLayout({
 }) {
   const pathname = usePathname();
   const isWelcomePage = pathname.endsWith("/welcome");
+  const isSuccessPage = pathname.endsWith("/success");
 
   /* Welcome page and OTP/email page both render without the chrome */
   const isFullscreenPage =
     isWelcomePage ||
+    isSuccessPage ||
     /\/onboarding\/[^/]+$/.test(pathname); /* matches /onboarding/[token] exactly */
 
   if (isFullscreenPage) {

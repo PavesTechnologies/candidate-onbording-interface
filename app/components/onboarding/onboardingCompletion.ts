@@ -45,12 +45,13 @@ export function getCompletedSteps(token: string): boolean[] {
         }
 
         if (steps[index].path === "bank-pf-details") {
+          const bank = "bank" in parsed ? parsed.bank : parsed;
           return !!(
-            parsed.account_holder_name &&
-            parsed.bank_name &&
-            parsed.account_number &&
-            parsed.ifsc_code &&
-            parsed.account_type
+            bank?.account_holder_name &&
+            bank?.bank_name &&
+            bank?.account_number &&
+            bank?.ifsc_code &&
+            bank?.account_type
           );
         }
 

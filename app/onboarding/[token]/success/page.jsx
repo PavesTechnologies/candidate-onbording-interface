@@ -1,45 +1,68 @@
 "use client";
 
+import Image from "next/image";
+
 export default function SuccessPage() {
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden flex items-center justify-center p-6 md:p-12">
-      {/* Premium Background with wider gradients */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-indigo-50/50 to-white pointer-events-none">
-        <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-indigo-200/30 rounded-full blur-[120px] opacity-40 animate-pulse"></div>
-        <div className="absolute bottom-[-20%] left-[-10%] w-[800px] h-[800px] bg-blue-200/30 rounded-full blur-[120px] opacity-40 animate-pulse"></div>
-      </div>
+    <main className="min-h-screen bg-[#eef3f8] flex flex-col overflow-hidden">
+      <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-400" />
 
-      <div className="relative z-10 w-full max-w-4xl text-center animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out">
-        <div className="mb-12 flex justify-center">
-          <div className="w-22 h-22 bg-green-50 rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-green-100/50 border border-green-100 rotate-3 hover:rotate-0 transition-transform duration-500">
-            <svg className="w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+      <section className="relative flex flex-1 items-center justify-center px-5 py-10">
+        <Image
+          src="/logo.png"
+          alt=""
+          width={720}
+          height={720}
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-auto w-[360px] -translate-x-1/2 -translate-y-1/2 select-none object-contain opacity-[0.08] sm:w-[520px] md:w-[680px]"
+        />
+        <div className="relative z-10 w-full max-w-4xl px-2 py-10 md:px-8 md:py-12">
+          <div className="mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
+            <svg className="h-9 w-9" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-        </div>
 
-        <h1 className="text-3xl md:text-5xl font-black text-indigo-950 tracking-tight mb-8 leading-[1.1]">
-          Onboarding <span className="text-[#1e3a8a]">Successfully</span> <br />
-          Complete
-        </h1>
-
-        <div className="h-2 w-32 bg-[#1e3a8a] shadow-blue-100 shadow-xl"></div>
-
-        <p className="text-1xl md:text-1xl text-indigo-900/60 font-semibold leading-relaxed max-w-2xl mx-auto">
-          We've received all your information. Our team is already reviewing it and will reach out shortly via email.
-        </p>
-
-        <div className="mt-24 space-y-4">
-          <div className="inline-flex items-center gap-2 px-6 py-2 bg-blue-50 text-[#1e3a8a] border-blue-100">
-            <span className="w-2 h-2 bg-indigo-600 rounded-full animate-ping"></span>
-            Review in Progress
+          <div className="text-center">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">
+              Submission received
+            </p>
+            <h1 className="text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">
+              Onboarding successfully completed
+            </h1>
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-slate-600 md:text-base md:leading-7">
+              We&apos;ve received all your information. Our team will review your submission and contact you by email if anything else is needed.
+            </p>
           </div>
-          <p className="text-[10px] font-black text-indigo-300 uppercase tracking-[0.4em] pt-4">
+
+          <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 divide-y divide-slate-200 border-y border-slate-200 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            <div className="px-4 py-4 text-center">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Status</p>
+              <p className="mt-1 text-sm font-semibold text-slate-800">Submitted</p>
+            </div>
+            <div className="px-4 py-4 text-center">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Next Step</p>
+              <p className="mt-1 text-sm font-semibold text-slate-800">HR Review</p>
+            </div>
+            <div className="px-4 py-4 text-center">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Action</p>
+              <p className="mt-1 text-sm font-semibold text-slate-800">No Pending Task</p>
+            </div>
+          </div>
+
+          <div className="mt-9 flex justify-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              Review in progress
+            </div>
+          </div>
+
+          <p className="mt-7 text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
             You may now close this window safely
           </p>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
 
