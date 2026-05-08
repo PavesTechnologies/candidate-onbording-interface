@@ -1,26 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* prevent browser-level scroll; each layout owns its scroll */
 }
 
 body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* body never scrolls — internal elements use overflowY: auto */
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* ══════════════════════════════════════════════
+   ONBOARDING FORM PAGES — Strip outer white card
+   ══════════════════════════════════════════════ */
+
+/* 1. Remove padding from the py-4 wrapper */
+.ob-content > .py-4 {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* 2. Turn the big white card transparent */
+.ob-content > .py-4 > div:first-child {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* ══════════════════════════════════════════════
+   FORM PAGE HEADINGS — Enterprise typography
+   ══════════════════════════════════════════════ */
+
+/* 3. Main page h2 heading */
+.ob-content > .py-4 > div:first-child > div:first-child h2 {
+  font-size: 1rem !important;         /* 16px — tighter, more enterprise */
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.3 !important;
+}
+
+/* 4. Page subtitle / description */
+.ob-content > .py-4 > div:first-child > div:first-child p {
+  font-size: 12.5px !important;
+  color: #64748b !important;
+  margin-top: 4px !important;
+  line-height: 1.55 !important;
+}
+
+/* 5. Hide redundant "Step X of 6" badge (header already shows this) */
+.ob-content > .py-4 > div:first-child > div:first-child span[class*="rounded-full"][class*="bg-blue-50"] {
+  display: none !important;
+}
+
+/* 6. Page header divider row */
+.ob-content > .py-4 > div:first-child > div.flex:first-child {
+  margin-bottom: 20px !important;
+  padding-bottom: 16px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* ══════════════════════════════════════════════
+   FORM PAGE SUB-SECTIONS — Section headings
+   ══════════════════════════════════════════════ */
+
+/* 7. Sub-section headings (Emergency Contact, Offer Info, etc.) */
+.ob-content h3[class*="text-[#1e3a8a]"],
+.ob-content h3[class*="text-indigo"] {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* 8. Section separator borders */
+.ob-content .border-t.border-indigo-200,
+.ob-content .border-t.border-indigo-100,
+.ob-content .border-b.border-indigo-200,
+.ob-content .border-b.border-indigo-100 {
+  border-color: #e2e8f0 !important;
+}
+
+/* 9. Offer info block — modernise */
+.ob-content .bg-gradient-to-r.from-indigo-50 {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+.ob-content .bg-gradient-to-r.from-indigo-50 h3 {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+}
+.ob-content .bg-gradient-to-r.from-indigo-50 p[class*="text-indigo"] {
+  color: #6366f1 !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+}
+.ob-content .bg-gradient-to-r.from-indigo-50 p[class*="font-semibold"],
+.ob-content .bg-gradient-to-r.from-indigo-50 p[class*="text-gray-900"] {
+  color: #0f172a !important;
+  font-size: 13.5px !important;
+}
+
+/* 10. Action button row at bottom of form pages */
+.ob-content .flex.justify-end.gap-4.pt-4.border-t,
+.ob-content .flex.justify-end.gap-4.pt-6.border-t {
+  border-top-color: #e2e8f0 !important;
+  margin-top: 8px !important;
+  padding-top: 16px !important;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ── Text selection ── */
+::selection { background: #e0e7ff; color: #3730a3; }

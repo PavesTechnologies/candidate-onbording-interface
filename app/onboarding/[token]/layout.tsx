@@ -1,5 +1,7 @@
 "use client";
+
 import OnboardingSidebar from "@/app/components/onboarding/OnboardingSidebar";
+import OnboardingHeader from "@/app/components/onboarding/OnboardingHeader";
 import { usePathname } from "next/navigation";
 
 export default function OnboardingLayout({
@@ -10,21 +12,49 @@ export default function OnboardingLayout({
   const pathname = usePathname();
   const isWelcomePage = pathname.endsWith("/welcome");
 
-  if (isWelcomePage) {
+  /* Welcome page and OTP/email page both render without the chrome */
+  const isFullscreenPage =
+    isWelcomePage ||
+    /\/onboarding\/[^/]+$/.test(pathname); /* matches /onboarding/[token] exactly */
+
+  if (isFullscreenPage) {
     return <>{children}</>;
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-50 flex-row overflow-hidden">
-      {/* Sidebar Stepper */}
+    <div style={{
+      display: "flex",
+      height: "100vh",
+      overflow: "hidden",
+      background: "#f8fafc",
+    }}>
+      {/* Sidebar */}
       <OnboardingSidebar />
 
-      {/* Dynamic Page Content */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
-          {children}
-        </div>
-      </main>
+      {/* Content column */}
+      <div style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        minWidth: 0,
+        minHeight: 0,  /* prevent flex item from expanding beyond parent */
+      }}>
+        <OnboardingHeader />
+
+        <main style={{
+          flex: 1,
+          minHeight: 0,  /* required: lets flex child shrink and own its overflow */
+          overflowY: "auto",
+          overflowX: "hidden",
+          padding: "24px 32px 20px",
+          background: "#f8fafc",
+        }}>
+          <div className="ob-content" style={{ maxWidth: "900px", margin: "0 auto" }}>
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

@@ -429,24 +429,29 @@ export default function OnboardingPreviewPage() {
   return (
     <div className="py-4">
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
-        <div className="mb-10 text-center border-b pb-8">
-          <h1 className="text-3xl font-extrabold text-[#1e3a8a] mb-2">Review Your Onboarding</h1>
-          <p className="text-gray-500 font-medium">Please verify all information before final submission</p>
-          {!isDataComplete && (
-            <p className="mt-4 text-red-500 font-medium flex items-center justify-center gap-2">
-              <span className="w-2 h-2 bg-red-50 rounded-full animate-pulse border border-red-500"></span>
-              Some sections are incomplete
-            </p>
-          )}
+        {/* Page Header */}
+        <div className="mb-5 pb-4 border-b border-slate-100">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-xl font-semibold text-slate-900 tracking-tight">Review Your Onboarding</h1>
+              <p className="text-sm text-slate-500 mt-1">Please verify all information before final submission</p>
+            </div>
+            {!isDataComplete && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50 border border-red-100 rounded-lg shrink-0">
+                <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></span>
+                <span className="text-xs font-medium text-red-600">Sections incomplete</span>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="space-y-12">
+        <div className="space-y-6">
           {/* PERSONAL DETAILS */}
           <Section
             title="Personal Information"
             onEdit={() => router.push(`/onboarding/${token}/personal-details?edit=true`)}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
               <PreviewRow label="Full Name" value={`${personalDetails?.first_name} ${personalDetails?.last_name}`} />
               <PreviewRow label="Email Address" value={personalDetails?.email} />
               <PreviewRow label="Contact Number" value={personalDetails?.contact_number} />
@@ -487,16 +492,16 @@ export default function OnboardingPreviewPage() {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {identityList.map((doc, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 flex items-start gap-4">
-                  <div className="bg-white p-3 rounded-lg shadow-sm">
-                    <svg className="w-6 h-6 text-[#1e3a8a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                  <div className="bg-white p-2.5 rounded-lg border border-slate-200 shrink-0">
+                    <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-bold text-indigo-900 text-sm mb-1">{doc.identity_type_name}</h4>
-                    <p className="text-sm text-[#1e3a8a] font-medium mb-2">{doc.identity_file_number}</p>
-                    <span className="text-xs px-2 py-1 bg-white text-indigo-500 rounded-md border border-indigo-100 shadow-sm">
+                    <h4 className="font-semibold text-slate-800 text-sm mb-0.5">{doc.identity_type_name}</h4>
+                    <p className="text-sm text-slate-600 font-medium mb-2">{doc.identity_file_number}</p>
+                    <span className="text-[11px] px-2 py-1 bg-white text-slate-500 rounded-md border border-slate-200">
                       {doc.file_path ? doc.file_path.split("/").pop() : doc.file?.name}
                     </span>
                   </div>
@@ -512,12 +517,12 @@ export default function OnboardingPreviewPage() {
           >
             <div className="space-y-6">
               {educationList.map((edu, idx) => (
-                <div key={idx} className="p-5 rounded-xl border border-indigo-100 bg-white shadow-sm">
-                  <h3 className="text-lg font-bold text-indigo-900 mb-4 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
-                    {edu.education_name}
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-slate-50/60">
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span>
+                    <h3 className="text-sm font-semibold text-slate-800">{edu.education_name}</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
                     <PreviewRow label="Institution" value={edu.institution_name} />
                     <PreviewRow label="Specialization" value={edu.specialization} />
                     <PreviewRow label="Location" value={edu.institute_location} />
@@ -526,10 +531,10 @@ export default function OnboardingPreviewPage() {
                     <PreviewRow label="Result" value={`${edu.percentage_cgpa}% / CGPA`} />
                   </div>
                   {edu.documents && edu.documents.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-indigo-50 flex gap-3 flex-wrap">
+                    <div className="mt-4 pt-4 border-t border-slate-100 flex gap-2 flex-wrap">
                       {edu.documents.map((d, i) => (
-                        <span key={i} className="text-xs bg-indigo-50 text-[#1e3a8a] px-3 py-1.5 rounded-full font-medium">
-                          📄 {d.document_name}
+                        <span key={i} className="text-[11px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-medium">
+                          {d.document_name}
                         </span>
                       ))}
                     </div>
@@ -547,24 +552,24 @@ export default function OnboardingPreviewPage() {
             >
               <div className="space-y-6">
                 {experienceDetails.map((exp, idx) => (
-                  <div key={idx} className="p-5 rounded-xl border border-indigo-100 bg-white shadow-sm">
+                  <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-slate-50/60">
                     <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-lg font-bold text-indigo-900">{exp.company_name}</h3>
-                      <span className={`text-xs px-3 py-1 rounded-full font-bold ${exp.is_current ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
-                        {exp.is_current ? "Current Employer" : "Previous Employer"}
+                      <h3 className="text-sm font-semibold text-slate-800">{exp.company_name}</h3>
+                      <span className={`text-[11px] px-2.5 py-1 rounded-md font-semibold ${exp.is_current ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
+                        {exp.is_current ? "Current" : "Previous"}
                       </span>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
                       <PreviewRow label="Role" value={exp.role_title} />
                       <PreviewRow label="Type" value={exp.employment_type} />
                       <PreviewRow label="Duration" value={`${exp.start_date} to ${exp.is_current ? "Present" : exp.end_date}`} />
                       {exp.is_current && <PreviewRow label="Notice Period" value={`${exp.notice_period_days} Days`} />}
                     </div>
                     {exp.documents && exp.documents.length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-indigo-50 flex gap-3 flex-wrap">
+                      <div className="mt-4 pt-4 border-t border-slate-100 flex gap-2 flex-wrap">
                         {exp.documents.map((d, i) => (
-                          <span key={i} className="text-xs bg-indigo-50 text-[#1e3a8a] px-3 py-1.5 rounded-full font-medium">
-                            📄 {DOCUMENT_LABELS[d.doc_type || ""] || d.doc_type}
+                          <span key={i} className="text-[11px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-medium">
+                            {DOCUMENT_LABELS[d.doc_type || ""] || d.doc_type}
                           </span>
                         ))}
                       </div>
@@ -578,103 +583,96 @@ export default function OnboardingPreviewPage() {
           <Section
             title="Bank & PF Details"
             onEdit={() => router.push(`/onboarding/${token}/bank-pf-details?edit=true`)}>
-            <div className="p-6 rounded-xl border border-indigo-100 bg-white shadow-sm">
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
-
-                <PreviewRow
-                  label="Account Holder Name"
-                  value={bankDetails?.bank?.account_holder_name}
-                />
-
-                <PreviewRow
-                  label="Bank Name"
-                  value={bankDetails?.bank?.bank_name}
-                />
-
-                <PreviewRow
-                  label="Branch Name"
-                  value={bankDetails?.bank?.branch_name}
-                />
-
-                <PreviewRow
-                  label="Account Type"
-                  value={bankDetails?.bank?.account_type}
-                />
-
-                <PreviewRow
-                  label="Account Number"
-                  value={
-                    bankDetails?.bank?.account_number
-                      ? `**** **** **** ${bankDetails.bank.account_number.slice(-4)}`
-                      : "-"
-                  }
-                />
-
-                <PreviewRow
-                  label="IFSC Code"
-                  value={bankDetails?.bank?.ifsc_code}
-                />
-
-                <PreviewRow
-                  label="PF Member"
-                  value={bankDetails?.pf?.pf_member ? "Yes" : "No"}
-                />
-
-                {bankDetails?.pf?.pf_member && (
-                  <PreviewRow
-                    label="UAN Number"
-                    value={bankDetails?.pf?.uan_number}
-                  />
-                )}
-
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+              <PreviewRow label="Account Holder Name" value={bankDetails?.bank?.account_holder_name} />
+              <PreviewRow label="Bank Name" value={bankDetails?.bank?.bank_name} />
+              <PreviewRow label="Branch Name" value={bankDetails?.bank?.branch_name} />
+              <PreviewRow label="Account Type" value={bankDetails?.bank?.account_type} />
+              <PreviewRow
+                label="Account Number"
+                value={
+                  bankDetails?.bank?.account_number
+                    ? `**** **** **** ${bankDetails.bank.account_number.slice(-4)}`
+                    : "-"
+                }
+              />
+              <PreviewRow label="IFSC Code" value={bankDetails?.bank?.ifsc_code} />
+              <PreviewRow label="PF Member" value={bankDetails?.pf?.pf_member ? "Yes" : "No"} />
+              {bankDetails?.pf?.pf_member && (
+                <PreviewRow label="UAN Number" value={bankDetails?.pf?.uan_number} />
+              )}
             </div>
           </Section>
 
           {/* SUBMISSION ACTION */}
-          <div className="mt-12 space-y-8">
-            <div className={`p-6 rounded-2xl border-2 transition-all ${confirmed ? "border-indigo-500 bg-indigo-50 shadow-md" : "border-indigo-100 bg-white"}`}>
-              <label className="flex items-center gap-4 cursor-pointer">
-                <div className="relative flex items-center justify-center">
+          <div>
+            <div className={`rounded-2xl border overflow-hidden transition-all duration-200 ${
+              confirmed ? "border-indigo-200" : "border-slate-200"
+            }`}>
+
+              {/* Declaration */}
+              <label className={`flex items-start gap-4 p-6 cursor-pointer transition-colors duration-150 ${
+                confirmed ? "bg-indigo-50/40" : "bg-white hover:bg-slate-50/60"
+              }`}>
+                <div className="mt-0.5 shrink-0">
                   <input
                     type="checkbox"
-                    className="peer sr-only"
+                    className="sr-only"
                     checked={confirmed}
                     onChange={(e) => setConfirmed(e.target.checked)}
                   />
-                  <div className="w-8 h-8 md:w-6 md:h-6 border-2 border-indigo-300 rounded peer-checked:bg-[#1e3a8a] peer-checked:border-[#1e3a8a] transition-all flex items-center justify-center">
-                    <svg className={`w-4 h-4 text-white ${confirmed ? "scale-100" : "scale-0"} transition-transform`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                    </svg>
+                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-150 ${
+                    confirmed ? "bg-indigo-600 border-indigo-600" : "border-slate-300 bg-white"
+                  }`}>
+                    {confirmed && (
+                      <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+                        <path d="M1.5 5.5l3 3 5-5" stroke="#fff" strokeWidth="1.8"
+                          strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
                   </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-indigo-900 font-bold">Declare Information Accuracy</p>
-                  <p className="text-sm text-[#1e3a8a]">I confirm that all details provided are true to the best of my knowledge.</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-slate-900">Declaration of Accuracy</p>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    I hereby declare that all information provided above is accurate and complete to the best of my knowledge. I understand that any misrepresentation may result in action by my employer.
+                  </p>
                 </div>
+                {confirmed && (
+                  <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 border border-emerald-100 rounded-lg self-start mt-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span className="text-[11px] font-semibold text-emerald-700">Agreed</span>
+                  </div>
+                )}
               </label>
-            </div>
 
-            <div className="flex items-center justify-between gap-6">
-              <p className="hidden md:block text-sm text-indigo-400 font-medium">
-                Step 6 of 6: Final Review
-              </p>
-              <div className="flex-1 md:flex-none flex gap-4">
-                <Button variant="secondary" onClick={() => router.back()} disabled={loading}>
-                  Go Back
-                </Button>
-                <Button
-                  variant="primary"
-                  className="flex-1 md:flex-none px-12"
-                  onClick={handleSubmit}
-                  disabled={isSubmitDisabled}
-                  loading={loading}
-                >
-                  Submit Onboarding 🚀
-                </Button>
+              {/* Footer action row */}
+              <div className="border-t border-slate-100 bg-slate-50/60 px-6 py-4 flex items-center justify-between gap-4">
+                <div>
+                  {!isDataComplete && (
+                    <div className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shrink-0"></span>
+                      <span className="text-xs text-amber-700 font-medium">
+                        Complete all sections before submitting
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button variant="secondary" onClick={() => router.back()} disabled={loading}>
+                    Go Back
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={handleSubmit}
+                    disabled={isSubmitDisabled}
+                    loading={loading}
+                  >
+                    Submit Onboarding
+                  </Button>
+                </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -687,20 +685,22 @@ export default function OnboardingPreviewPage() {
 
 function Section({ title, children, onEdit }: { title: string; children: React.ReactNode; onEdit: () => void }) {
   return (
-    <div className="relative group">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-[#1e3a8a] flex items-center gap-3">
-          <span className="w-1.5 h-8 bg-[#1e3a8a] rounded-full group-hover:bg-blue-400 transition-colors"></span>
-          {title}
-        </h2>
+    <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+      {/* Section header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
+        <h2 className="text-[13px] font-semibold text-slate-800 tracking-tight">{title}</h2>
         <button
           onClick={onEdit}
-          className="px-4 py-1.5 text-sm font-bold text-[#1e3a8a] bg-blue-50 hover:bg-blue-100 rounded-lg transition-all"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-indigo-600 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg transition-all duration-150"
         >
-          Modify
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M11.5 2.5a2.121 2.121 0 013 3L5 15H2v-3L11.5 2.5z" />
+          </svg>
+          Edit
         </button>
       </div>
-      <div className="pl-4 md:pl-5">{children}</div>
+      {/* Section body */}
+      <div className="p-6">{children}</div>
     </div>
   );
 }
@@ -708,26 +708,22 @@ function Section({ title, children, onEdit }: { title: string; children: React.R
 function PreviewRow({ label, value }: { label: string; value?: string | number | null }) {
   const display = value && String(value).trim() !== "" && value !== "undefined undefined" ? String(value) : "-";
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs font-bold text-[#1e3a8a] uppercase tracking-widest">{label}</span>
-      <span className="text-gray-900 font-medium text-lg leading-tight">{display}</span>
+    <div className="flex flex-col gap-0.5">
+      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{label}</span>
+      <span className="text-sm font-medium text-slate-800 leading-snug">{display}</span>
     </div>
   );
 }
 
 function AddressBlock({ title, address }: { title: string; address?: Address }) {
   return (
-    <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
-      <h4 className="text-xs font-bold text-[#1e3a8a] uppercase tracking-widest mb-3">{title}</h4>
-      <div className="text-indigo-900 font-medium leading-relaxed">
-        <p className="text-lg">{address?.address_line1}</p>
-        <p>{address?.address_line2}</p>
-        <p className="mt-2 text-indigo-700">
-          {address?.city}, {address?.district_or_ward}
-        </p>
-        <p>
-          {address?.state_or_region} - {address?.postal_code}
-        </p>
+    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+      <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-3">{title}</h4>
+      <div className="text-slate-700 text-sm leading-relaxed space-y-0.5">
+        <p className="font-medium text-slate-800">{address?.address_line1}</p>
+        {address?.address_line2 && <p>{address.address_line2}</p>}
+        <p>{address?.city}{address?.district_or_ward ? `, ${address.district_or_ward}` : ""}</p>
+        <p>{address?.state_or_region}{address?.postal_code ? ` - ${address.postal_code}` : ""}</p>
       </div>
     </div>
   );
