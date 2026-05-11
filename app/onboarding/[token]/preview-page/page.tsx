@@ -176,6 +176,11 @@ export default function OnboardingPreviewPage() {
     []
   );
 
+  const [hasExperience] = useLocalStorageForm<boolean>(
+    `has-experience-${token}`,
+    false
+  );
+
   const [experienceDetails, setExperienceDetails, clearExperience] = useLocalStorageForm<Experience[]>(
     `experience-details-${token}`,
     []
@@ -199,17 +204,16 @@ export default function OnboardingPreviewPage() {
   useEffect(() => {
     if (!mounted || !token) return;
     if (isSubmittedRef.current) return;
+    if (educationDetails.length === 0) return;
+    const hasMissing = educationDetails.some((edu) =>
+      edu.documents?.some((doc) => !doc.file_path)
+    );
+    if (!hasMissing) return;
 
     let cancelled = false;
 
     const backfillEducation = async () => {
       if (isSubmittedRef.current) return;
-      if (educationDetails.length === 0) return;
-      const hasMissing = educationDetails.some((edu) =>
-        edu.documents?.some((doc) => !doc.file_path)
-      );
-      if (!hasMissing) return;
-
       try {
         const base = API_CONFIG.EMPLOYEE_ONBOARDING_URL;
         const countryUuid = "019a8135-42fc-17ed-4825-f5a4634898fb";
@@ -264,13 +268,27 @@ export default function OnboardingPreviewPage() {
       } catch {}
     };
 
-    const backfillExperience = async () => {
-      const hasMissing = experienceDetails.some((exp) =>
-        exp.documents?.some((doc) => !doc.file_path)
-      );
-      if (!hasMissing) return;
-      if (!user_uuid) return;
+    void backfillEducation();
+    return () => { cancelled = true; };
+  }, [mounted, token, educationDetails, setEducationDetails]);
 
+  useEffect(() => {
+    if (!mounted || !token) return;
+    if (isSubmittedRef.current) return;
+    // if (!hasExperience) return;
+    if (!hasExperience || experienceDetails.length === 0) {
+  return;
+}
+    if (!user_uuid) return;
+    const hasMissing = experienceDetails.some((exp) =>
+      exp.documents?.some((doc) => !doc.file_path)
+    );
+    if (!hasMissing) return;
+
+    let cancelled = false;
+
+    const backfillExperience = async () => {
+      if (!experienceDetails.length) return;
       try {
         const base = API_CONFIG.EMPLOYEE_ONBOARDING_URL;
         const endpoints = [
@@ -318,21 +336,9 @@ export default function OnboardingPreviewPage() {
       } catch {}
     };
 
-    void backfillEducation();
     void backfillExperience();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    mounted,
-    token,
-    educationDetails,
-    experienceDetails,
-    user_uuid,
-    setEducationDetails,
-    setExperienceDetails,
-  ]);
+    return () => { cancelled = true; };
+  }, [mounted, token, hasExperience, experienceDetails, user_uuid, setExperienceDetails]);
 
   /* ===================== HELPERS ===================== */
 
@@ -370,31 +376,69 @@ export default function OnboardingPreviewPage() {
     [educationDetails]
   );
 
+  // const isDataComplete = useMemo(() => {
+  //   const hasBankDetails = Boolean(
+  //     bankDetails?.bank?.account_holder_name?.trim() &&
+  //       bankDetails.bank.bank_name?.trim() &&
+  //       bankDetails.bank.account_number?.trim() &&
+  //       bankDetails.bank.ifsc_code?.trim() &&
+  //       bankDetails.bank.account_type?.trim()
+  //   );
+  //   const hasValidExperience =
+  //   !hasExperience || experienceDetails.length > 0;
+
+  //   return Boolean(
+  //     user_uuid &&
+  //       personalDetails &&
+  //       hasAddressData(permanentAddress) &&
+  //       educationList.length > 0 &&
+  //       identityList.length > 0 &&
+        
+  //       hasBankDetails
+  //   );
+  // }, [user_uuid, personalDetails, permanentAddress, educationList, identityList, bankDetails]);
+
+  // const isSubmitDisabled = !confirmed || loading;
+
   const isDataComplete = useMemo(() => {
-    const hasBankDetails = Boolean(
-      bankDetails?.bank?.account_holder_name?.trim() &&
-        bankDetails.bank.bank_name?.trim() &&
-        bankDetails.bank.account_number?.trim() &&
-        bankDetails.bank.ifsc_code?.trim() &&
-        bankDetails.bank.account_type?.trim()
-    );
+  const hasBankDetails = Boolean(
+    bankDetails?.bank?.account_holder_name?.trim() &&
+      bankDetails.bank.bank_name?.trim() &&
+      bankDetails.bank.account_number?.trim() &&
+      bankDetails.bank.ifsc_code?.trim() &&
+      bankDetails.bank.account_type?.trim()
+  );
 
-    return Boolean(
-      user_uuid &&
-        personalDetails &&
-        hasAddressData(permanentAddress) &&
-        educationList.length > 0 &&
-        identityList.length > 0 &&
-        hasBankDetails
-    );
-  }, [user_uuid, personalDetails, permanentAddress, educationList, identityList, bankDetails]);
+  const hasValidExperience =
+    !hasExperience || experienceDetails.length > 0;
 
-  const isSubmitDisabled = !confirmed || !isDataComplete || loading;
-
-  const handleSubmit = async (confirmedOverride = confirmed) => {
+  return Boolean(
+    user_uuid &&
+      personalDetails &&
+      hasAddressData(permanentAddress) &&
+      educationList.length > 0 &&
+      identityList.length > 0 &&
+      hasBankDetails &&
+      hasValidExperience
+  );
+}, [
+  user_uuid,
+  personalDetails,
+  permanentAddress,
+  educationList,
+  identityList,
+  bankDetails,
+  hasExperience,
+  experienceDetails,
+]);
+const isSubmitDisabled =
+  !confirmed ||
+  loading ||
+  !isDataComplete;
+  const handleSubmitOnboarding = async () => {
     if (loading) return;
 
-    if (!confirmedOverride) {
+    if (!confirmed) {
       toast.error("Please confirm the details before submitting");
       return;
     }
@@ -430,13 +474,6 @@ export default function OnboardingPreviewPage() {
     } finally {
       setLoading(false);
       setGlobalLoading(false);
-    }
-  };
-
-  const handleDeclarationChange = (checked: boolean) => {
-    setConfirmed(checked);
-    if (checked) {
-      void handleSubmit(true);
     }
   };
 
@@ -561,11 +598,25 @@ export default function OnboardingPreviewPage() {
           </Section>
 
           {/* EXPERIENCE DETAILS */}
-          {experienceDetails.length > 0 && (
-            <Section
-              title="Work Experience"
-              onEdit={() => router.push(`/onboarding/${token}/experience-details?edit=true`)}
-            >
+          <Section
+            title="Work Experience"
+            onEdit={() => router.push(`/onboarding/${token}/experience-details?edit=true`)}
+          >
+            {!hasExperience ? (
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+                <div className="bg-white p-2.5 rounded-lg border border-emerald-200 shrink-0">
+                  <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-emerald-800">Fresher – No Prior Work Experience</p>
+                  <p className="text-xs text-emerald-600 mt-0.5 leading-relaxed">
+                    Candidate has indicated they are a fresher with no prior work experience.
+                  </p>
+                </div>
+              </div>
+            ) : (
               <div className="space-y-6">
                 {experienceDetails.map((exp, idx) => (
                   <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-slate-50/60">
@@ -593,8 +644,8 @@ export default function OnboardingPreviewPage() {
                   </div>
                 ))}
               </div>
-            </Section>
-          )}
+            )}
+          </Section>
           {/* BANK & PF DETAILS */}
           <Section
             title="Bank & PF Details"
@@ -627,19 +678,23 @@ export default function OnboardingPreviewPage() {
             }`}>
 
               {/* Declaration */}
-              <label htmlFor="declaration-confirmed" className={`flex items-start gap-4 p-6 cursor-pointer transition-colors duration-150 ${
-                confirmed ? "bg-indigo-50/40" : "bg-white hover:bg-slate-50/60"
-              }`}>
+              <div
+                role="checkbox"
+                aria-checked={confirmed}
+                aria-describedby="declaration-copy"
+                tabIndex={loading ? -1 : 0}
+                onClick={() => { if (!loading) setConfirmed((prev) => !prev); }}
+                onKeyDown={(e) => {
+                  if ((e.key === " " || e.key === "Enter") && !loading) {
+                    e.preventDefault();
+                    setConfirmed((prev) => !prev);
+                  }
+                }}
+                className={`flex items-start gap-4 p-6 cursor-pointer transition-colors duration-150 select-none outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-inset ${
+                  confirmed ? "bg-indigo-50/40" : "bg-white hover:bg-slate-50/60"
+                } ${loading ? "pointer-events-none opacity-60" : ""}`}
+              >
                 <div className="mt-0.5 shrink-0">
-                  <input
-                    id="declaration-confirmed"
-                    type="checkbox"
-                    className="absolute h-5 w-5 cursor-pointer opacity-0"
-                    checked={confirmed}
-                    onChange={(e) => handleDeclarationChange(e.target.checked)}
-                    aria-describedby="declaration-copy"
-                    disabled={loading}
-                  />
                   <div aria-hidden="true" className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-150 ${
                     confirmed ? "bg-indigo-600 border-indigo-600" : "border-slate-300 bg-white"
                   }`}>
@@ -663,7 +718,7 @@ export default function OnboardingPreviewPage() {
                     <span className="text-[11px] font-semibold text-emerald-700">Agreed</span>
                   </div>
                 )}
-              </label>
+              </div>
 
               {/* Footer action row */}
               <div className="border-t border-slate-100 bg-slate-50/60 px-6 py-4 flex items-center justify-between gap-4">
@@ -678,12 +733,13 @@ export default function OnboardingPreviewPage() {
                   )}
                 </div>
                 <div className="flex items-center gap-3">
-                  <Button variant="secondary" onClick={() => router.back()} disabled={loading}>
+                  <Button type="button" variant="secondary" onClick={() => router.back()} disabled={loading}>
                     Go Back
                   </Button>
                   <Button
+                    type="button"
                     variant="primary"
-                    onClick={() => handleSubmit()}
+                    onClick={handleSubmitOnboarding}
                     disabled={isSubmitDisabled}
                     loading={loading}
                   >
@@ -709,6 +765,7 @@ function Section({ title, children, onEdit }: { title: string; children: React.R
       <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
         <h2 className="text-[13px] font-semibold text-slate-800 tracking-tight">{title}</h2>
         <button
+          type="button"
           onClick={onEdit}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-indigo-600 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg transition-all duration-150"
         >
