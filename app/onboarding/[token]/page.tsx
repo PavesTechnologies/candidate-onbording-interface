@@ -100,12 +100,27 @@ export default function Page() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp: otpValue }),
       });
-
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || "Invalid OTP");
+
+      console.log("VERIFY OTP RESPONSE:", data);
+
+      if (
+        !res.ok ||
+        data?.success === false ||
+        data?.status === false ||
+        data?.verified === false ||
+        data?.message?.toLowerCase().includes("invalid")
+      ) {
+        throw new Error(
+          data?.message || "Invalid OTP"
+        );
+      }
 
       toast.success("OTP verified successfully");
-      setTimeout(() => router.push(`/onboarding/${token}/personal-details`), 1000);
+
+      setTimeout(() => {
+        router.push(`/onboarding/${token}/personal-details`);
+      }, 1000);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Verification failed";
       setError(message);
